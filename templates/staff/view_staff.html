@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-  <h2>📋 All Staff Members</h2>
-  <table class="table table-bordered table-striped mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>📋 All Staff Members</h2>
+    <!-- ➕ Onboarding Button -->
+    <a href="{% url 'add_staff' %}" class="btn btn-success">
+      ➕ Add New Onboarding
+    </a>
+  </div>
+
+  <table class="table table-bordered table-striped mt-3">
     <thead>
       <tr>
         <th>#</th>
@@ -27,7 +34,6 @@
         <td>{{ staff.status }}</td>
         <td>
           <a href="{% url 'edit_staff' staff.id %}" class="btn btn-sm btn-primary">Edit</a>
-          <!-- Optional: Enable this only after delete is implemented -->
           <a href="{% url 'delete_staff' staff.id %}" class="btn btn-sm btn-danger">Delete</a>
         </td>
       </tr>

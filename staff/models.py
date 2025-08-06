@@ -28,9 +28,9 @@ class Staff(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('On Leave', 'On Leave'),
-        ('Resigned', 'Resigned'),
+        ('DocPending', 'DocPending'),
+        ('Ongoing', 'Ongoing'),
+        ('Completed', 'Completed'),
     ]
 
     GENDER_CHOICES = [
@@ -60,7 +60,7 @@ class Staff(models.Model):
     offer_letter = models.FileField(upload_to='offer_letters/', null=True, blank=True)
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Ongoing')
     admin_notes = models.TextField(blank=True, null=True)
 
     staff_code = models.CharField(max_length=20, unique=True, blank=True, null=True)

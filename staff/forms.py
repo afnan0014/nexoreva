@@ -12,7 +12,6 @@ class StaffForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
-            'designation': forms.TextInput(attrs={'class': 'form-control'}),
             'reporting_manager': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'admin_notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
@@ -20,7 +19,7 @@ class StaffForm(forms.ModelForm):
             'employment_type': forms.Select(attrs={'class': 'form-select'}),
             'role': forms.Select(attrs={'class': 'form-select'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
+            'onbording_status': forms.Select(attrs={'class': 'form-select'}),
             'join_date': forms.DateInput(
                 attrs={'type': 'date', 'class': 'form-control'},
                 format='%Y-%m-%d'
@@ -36,3 +35,6 @@ class StaffForm(forms.ModelForm):
         super(StaffForm, self).__init__(*args, **kwargs)
         self.fields['join_date'].input_formats = ['%Y-%m-%d']
         self.fields['date_of_birth'].input_formats = ['%Y-%m-%d']
+        
+        # 👇 Pop 'designation' field so it's excluded from the form but kept in the model
+        self.fields.pop('designation', None)

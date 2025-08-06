@@ -12,57 +12,73 @@
     {% endfor %}
   {% endif %}
 
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <strong>⚠️ Please fix the errors below:</strong>
+      <ul class="mb-0">
+        {% for field in form %}
+          {% if field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+          {% endif %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li><strong>Form error:</strong> {{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     <!-- 🧍 Basic Info -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">🧍 Basic Information</legend>
-      <div class="mb-2">{{ form.full_name.label_tag }} {{ form.full_name }}</div>
-      <div class="mb-2">{{ form.role.label_tag }} {{ form.role }}</div>
-      <div class="mb-2">{{ form.department.label_tag }} {{ form.department }}</div>
-      <div class="mb-2">{{ form.designation.label_tag }} {{ form.designation }}</div>
-      <div class="mb-2">{{ form.employment_type.label_tag }} {{ form.employment_type }}</div>
-      <div class="mb-2">{{ form.reporting_manager.label_tag }} {{ form.reporting_manager }}</div>
-      <div class="mb-2">{{ form.join_date.label_tag }} {{ form.join_date }}</div>
+      <div class="mb-2">{{ form.full_name.label_tag }} {{ form.full_name }} {{ form.full_name.errors }}</div>
+      <div class="mb-2">{{ form.role.label_tag }} {{ form.role }} {{ form.role.errors }}</div>
+      <div class="mb-2">{{ form.department.label_tag }} {{ form.department }} {{ form.department.errors }}</div>
+      <!-- <div class="mb-2">{{ form.designation.label_tag }} {{ form.designation }} {{ form.designation.errors }}</div> -->
+      <div class="mb-2">{{ form.employment_type.label_tag }} {{ form.employment_type }} {{ form.employment_type.errors }}</div>
+      <div class="mb-2">{{ form.reporting_manager.label_tag }} {{ form.reporting_manager }} {{ form.reporting_manager.errors }}</div>
+      <div class="mb-2">{{ form.join_date.label_tag }} {{ form.join_date }} {{ form.join_date.errors }}</div>
     </fieldset>
 
     <!-- 📞 Contact Info -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">📞 Contact Details</legend>
-      <div class="mb-2">{{ form.email.label_tag }} {{ form.email }}</div>
-      <div class="mb-2">{{ form.phone.label_tag }} {{ form.phone }}</div>
-      <div class="mb-2">{{ form.emergency_contact.label_tag }} {{ form.emergency_contact }}</div>
+      <div class="mb-2">{{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}</div>
+      <div class="mb-2">{{ form.phone.label_tag }} {{ form.phone }} {{ form.phone.errors }}</div>
+      <div class="mb-2">{{ form.emergency_contact.label_tag }} {{ form.emergency_contact }} {{ form.emergency_contact.errors }}</div>
     </fieldset>
 
     <!-- 📍 Personal Info -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">📍 Personal Details</legend>
-      <div class="mb-2">{{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}</div>
-      <div class="mb-2">{{ form.gender.label_tag }} {{ form.gender }}</div>
-      <div class="mb-2">{{ form.address.label_tag }} {{ form.address }}</div>
+      <div class="mb-2">{{ form.date_of_birth.label_tag }} {{ form.date_of_birth }} {{ form.date_of_birth.errors }}</div>
+      <div class="mb-2">{{ form.gender.label_tag }} {{ form.gender }} {{ form.gender.errors }}</div>
+      <div class="mb-2">{{ form.address.label_tag }} {{ form.address }} {{ form.address.errors }}</div>
     </fieldset>
 
     <!-- 📁 Documents -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">📁 Documents</legend>
-      <div class="mb-2">{{ form.id_proof.label_tag }} {{ form.id_proof }}</div>
-      <div class="mb-2">{{ form.resume.label_tag }} {{ form.resume }}</div>
-      <div class="mb-2">{{ form.offer_letter.label_tag }} {{ form.offer_letter }}</div>
-      <div class="mb-2">{{ form.photo.label_tag }} {{ form.photo }}</div>
+      <div class="mb-2">{{ form.id_proof.label_tag }} {{ form.id_proof }} {{ form.id_proof.errors }}</div>
+      <div class="mb-2">{{ form.resume.label_tag }} {{ form.resume }} {{ form.resume.errors }}</div>
+      <div class="mb-2">{{ form.offer_letter.label_tag }} {{ form.offer_letter }} {{ form.offer_letter.errors }}</div>
+      <div class="mb-2">{{ form.photo.label_tag }} {{ form.photo }} {{ form.photo.errors }}</div>
     </fieldset>
 
     <!-- 🆔 Unique Staff Code -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">🆔 Staff Code</legend>
-      <div class="mb-2">{{ form.staff_code.label_tag }} {{ form.staff_code }}</div>
+      <div class="mb-2">{{ form.staff_code.label_tag }} {{ form.staff_code }} {{ form.staff_code.errors }}</div>
     </fieldset>
 
     <!-- 📜 Status and Notes -->
     <fieldset class="border p-3 mb-4">
       <legend class="w-auto">📜 Status & Notes</legend>
-      <div class="mb-2">{{ form.status.label_tag }} {{ form.status }}</div>
-      <div class="mb-2">{{ form.admin_notes.label_tag }} {{ form.admin_notes }}</div>
+      <div class="mb-2">{{ form.status.label_tag }} {{ form.status }} {{ form.status.errors }}</div>
+      <div class="mb-2">{{ form.admin_notes.label_tag }} {{ form.admin_notes }} {{ form.admin_notes.errors }}</div>
     </fieldset>
 
     <button type="submit" class="btn btn-primary">Submit</button>
@@ -70,5 +86,5 @@
 </div>
 
 <!-- ✅ Load dynamic JS logic -->
-<script src="{% static 'js/staff_code.js' %}"></script>
+<script src="{% static 'js/staff_code.js' %}?v=1.0.3"></script>
 {% endblock %}
