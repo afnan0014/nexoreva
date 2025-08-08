@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate Generator</title>
+    <title>Certificate Generator - WhatsApp Text Message Share</title>
     <style>
         * {
             margin: 0;
@@ -12,210 +12,502 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 15px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid #e3e3e3;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-left: 5px solid;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .alert-success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border-color: #2ecc71;
+        }
+        
+        .alert-error {
+            background-color: #fadbd8;
+            color: #c0392b;
+            border-color: #e74c3c;
+        }
+
+        .alert-warning {
+            background-color: #fef5e7;
+            color: #d68910;
+            border-color: #f39c12;
+        }
+
+        .alert-info {
+            background-color: #d6eaf8;
+            color: #2874a6;
+            border-color: #3498db;
+        }
+        
+        .certificate-result {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            border: 3px solid #27ae60;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8fff9, #e8f5e8);
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .certificate-result h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .certificate-result p {
+            color: #34495e;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .whatsapp-section {
+            background: linear-gradient(135deg, #f0f8f0, #e8f5e8);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid #25d366;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.1);
+        }
+
+        .whatsapp-section h4 {
+            color: #25d366;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25d366, #20b954);
+            color: white;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+        }
+        
+        .whatsapp-btn:hover {
+            background: linear-gradient(135deg, #20b954, #1da851);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            text-decoration: none;
+            color: white;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
-            padding: 48px;
-            max-width: 900px;
+        .download-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
             width: 100%;
-            border: 1px solid #e2e8f0;
+            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #1f5582);
+            transform: translateY(-3px);
+            text-decoration: none;
+            color: white;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .hint {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .no-api-notice {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            color: #2c5234;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            border: 2px solid #25d366;
+        }
+
+        /* Certificate List Styles */
+        .certificate-card {
+            border: 2px solid #e3e3e3;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .container::before {
+        .certificate-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #6b7280, #9ca3af, #6b7280);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            color: #1f2937;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-
-        .header p {
-            color: #6b7280;
-            font-size: 1.1rem;
-            font-weight: 400;
-        }
-
-        .form-group {
-            margin-bottom: 28px;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            letter-spacing: 0.01em;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #fafafa;
-            color: #1f2937;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #6b7280;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(107, 114, 128, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .form-group input:hover {
-            border-color: #9ca3af;
-            background: white;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 18px 24px;
-            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(75, 85, 99, 0.3);
-            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0px);
-        }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
+            width: 5px;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
-        .submit-btn:hover::before {
-            left: 100%;
+        .certificate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
         }
 
-        .download-section {
-            margin-top: 40px;
-            padding: 32px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
+        .certificate-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .download-section h3 {
-            color: #1f2937;
-            font-size: 1.5rem;
-            font-weight: 700;
+        .certificate-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .download-link {
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .certificate-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 28px;
-            background: white;
-            color: #4b5563;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease;
-            margin-bottom: 24px;
+            gap: 8px;
         }
 
-        .download-link:hover {
-            background: #4b5563;
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9, #1f5582);
+            text-decoration: none;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(75, 85, 99, 0.2);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
 
-        .download-icon {
-            width: 20px;
-            height: 20px;
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
         }
 
-        .certificate-preview {
-            margin-top: 24px;
+        .btn-success:hover {
+            background: linear-gradient(135deg, #229954, #27ae60);
+            text-decoration: none;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
         }
 
-        .certificate-preview img {
-            max-width: 100%;
-            height: auto;
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366, #20b954);
+            color: white;
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #20b954, #1da851);
+            text-decoration: none;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
-            border: 1px solid #e2e8f0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .icon {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            margin-bottom: 16px;
-            opacity: 0.7;
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        @media (max-width: 640px) {
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
             .container {
-                padding: 32px 24px;
-                margin: 16px;
+                margin: 20px;
+                padding: 25px;
             }
-            
+
             .header h1 {
-                font-size: 2rem;
+                font-size: 2em;
             }
-            
-            .form-group input {
-                padding: 14px 16px;
+
+            .tab-nav {
+                flex-direction: column;
+            }
+
+            .certificate-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -223,75 +515,258 @@
 <body>
     <div class="container">
         <div class="header">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <path d="M8 14h.01"></path>
-                <path d="M12 14h.01"></path>
-                <path d="M16 14h.01"></path>
-                <path d="M8 18h.01"></path>
-                <path d="M12 18h.01"></path>
-                <path d="M16 18h.01"></path>
-            </svg>
-            <h1>Certificate Generator</h1>
-            <p>Create professional certificates with ease</p>
+            <h1>🎓 Certificate Management System</h1>
+            <p>Generate certificates and share via WhatsApp (No API Required)</p>
         </div>
 
-        <form method="POST">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" name="name" id="name" required placeholder="Enter recipient's full name">
-            </div>
+        <div class="no-api-notice">
+            ✅ <strong>No WhatsApp API Required!</strong> This system uses WhatsApp's "Click to Chat" feature to share certificate details directly.
+        </div>
 
-            <div class="form-group">
-                <label for="role">Designation</label>
-                <input type="text" name="role" id="role" required placeholder="Enter job title or role">
-            </div>
-
-            <div class="form-group">
-                <label for="date">Date (DD-MM-YYYY)</label>
-                <input type="text" name="date" id="date" required placeholder="25-12-2024">
-            </div>
-
-            <button type="submit" class="submit-btn">
-                Generate Certificate
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'generateTab')">
+                🎨 Generate Certificate
             </button>
-        </form>
+            <button class="tab-btn" onclick="openTab(event, 'listTab')">
+                📜 Certificate Records
+            </button>
+        </div>
 
-        {% if certificate_url %}
-            <div class="download-section">
-                <h3>Your Certificate is Ready!</h3>
-                <a href="{{ certificate_url }}" class="download-link" download>
-                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7,10 12,15 17,10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download Certificate
-                </a>
-                
-                <div class="certificate-preview">
-                    <img src="{{ certificate_url }}" alt="Certificate Preview">
+        <!-- Display Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Generate Certificate Tab -->
+        <div id="generateTab" class="tab-content active">
+            <div class="form-section">
+                <form method="POST" id="certificateForm">
+                    {% csrf_token %}
+                    
+                    <!-- Staff Code Input -->
+                    <div class="form-group">
+                        {{ form.staff_code.label_tag }}
+                        {{ form.staff_code }}
+                        <div class="hint">Example: nxremp1234 or nxrint5678</div>
+                        {% if form.staff_code.errors %}
+                            <div class="alert alert-error">
+                                {{ form.staff_code.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Course Code Input -->
+                    <div class="form-group">
+                        {{ form.course_unicode.label_tag }}
+                        {{ form.course_unicode }}
+                        <div class="hint">Example: IT12345, ENG67890, or MED11111</div>
+                        {% if form.course_unicode.errors %}
+                            <div class="alert alert-error">
+                                {{ form.course_unicode.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" id="generateBtn">
+                        🎨 Generate Certificate
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Certificate Result -->
+            {% if certificate_url %}
+                <div class="certificate-result">
+                    <h3>🎉 Certificate Generated Successfully!</h3>
+                    <p>Your certificate PNG is ready for download and WhatsApp sharing.</p>
+                    
+                    <a href="{{ certificate_url }}" download class="download-btn">
+                        📥 Download Certificate PNG
+                    </a>
+
+                    <!-- WhatsApp Share Section (No API Required) -->
+                    <div class="whatsapp-section">
+                        <h4>
+                            📱 Share Certificate via WhatsApp
+                        </h4>
+                        <p style="margin-bottom: 15px; color: #34495e;">
+                            Click the button below to share certificate details via WhatsApp. The message will include congratulations, course details, certificate ID, and download link.
+                        </p>
+                        
+                        <a href="{{ whatsapp_share_link }}" target="_blank" class="whatsapp-btn">
+                            📱 Share via WhatsApp
+                        </a>
+                        
+                        <div style="margin-top: 10px; font-size: 12px; color: #7f8c8d; text-align: center;">
+                            Opens WhatsApp with pre-filled message
+                        </div>
+                    </div>
+                    
+                    <img src="{{ certificate_url }}" alt="Generated Certificate" class="preview-image">
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Certificate Records Tab -->
+        <div id="listTab" class="tab-content">
+            <!-- Statistics Bar -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-number">{{ all_certificates|length }}</div>
+                    <div class="stat-label">Total Certificates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ today_certificates|length|default:0 }}</div>
+                    <div class="stat-label">Generated Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ unique_courses|length|default:0 }}</div>
+                    <div class="stat-label">Unique Courses</div>
                 </div>
             </div>
-        {% endif %}
+
+            <!-- Certificate Records -->
+            {% if all_certificates %}
+                {% for certificate in all_certificates %}
+                    <div class="certificate-card">
+                        <h3>
+                            🎓 {{ certificate.staff.full_name }}
+                        </h3>
+                        
+                        <div class="certificate-info">
+                            <div class="info-item">
+                                <span class="info-label">Course</span>
+                                <span class="info-value">{{ certificate.course.name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Issue Date</span>
+                                <span class="info-value">{{ certificate.issue_date|date:"d M Y" }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Certificate ID</span>
+                                <span class="info-value">{{ certificate.certificate_id }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Generated On</span>
+                                <span class="info-value">{{ certificate.generated_on|date:"d M Y, H:i" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="certificate-actions">
+                            <a href="{{ certificate.certificate_file.url }}" target="_blank" class="btn btn-primary">
+                                🔍 View Certificate
+                            </a>
+                            <a href="{{ certificate.certificate_file.url }}" download class="btn btn-success">
+                                📥 Download PNG
+                            </a>
+                            <a href="#" class="btn btn-whatsapp whatsapp-share-btn" data-certificate-id="{{ certificate.certificate_id }}">
+                                📱 Share WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 4em; margin-bottom: 20px; opacity: 0.5;">📜</div>
+                    <h3>No Certificates Found</h3>
+                    <p>Generate your first certificate using the "Generate Certificate" tab.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
     <script>
-        // Auto-format date input
-        document.getElementById('date').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '-' + value.substring(2);
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabContent, tabButtons;
+            
+            // Hide all tab content
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
             }
-            if (value.length >= 5) {
-                value = value.substring(0, 5) + '-' + value.substring(5, 9);
+            
+            // Remove active class from all tab buttons
+            tabButtons = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
             }
-            e.target.value = value;
+            
+            // Show the selected tab and mark button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Certificate generation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('certificateForm');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            if (form) {
+                form.addEventListener('submit', function() {
+                    generateBtn.innerHTML = '⏳ Generating Certificate...';
+                    generateBtn.disabled = true;
+                    
+                    setTimeout(function() {
+                        generateBtn.innerHTML = '🎨 Generate Certificate';
+                        generateBtn.disabled = false;
+                    }, 5000);
+                });
+            }
+
+            // Input validation feedback
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        this.style.borderColor = '#27ae60';
+                    } else {
+                        this.style.borderColor = '#e3e3e3';
+                    }
+                });
+            });
+
+            // WhatsApp share functionality for certificate list
+            const whatsappShareBtns = document.querySelectorAll('.whatsapp-share-btn');
+            whatsappShareBtns.forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    const certificateId = this.getAttribute('data-certificate-id');
+                    
+                    if (!certificateId) {
+                        alert('Certificate ID not found.');
+                        return;
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('certificate_id', certificateId);
+                    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                    
+                    try {
+                        const response = await fetch('{% url "get_whatsapp_share_link_ajax" %}', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            window.open(data.whatsapp_link, '_blank');
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                        
+                    } catch (error) {
+                        alert('Error generating WhatsApp share link. Please try again.');
+                        console.error('Error:', error);
+                    }
+                });
+            });
         });
     </script>
 </body>
