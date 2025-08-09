@@ -1,68 +1,93 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/status_styles.css' %}">
+<link rel="stylesheet" href="{% static 'css/attendance_home.css' %}">
 {% endblock %}
 
-
 {% block content %}
+<!-- Header/Navbar -->
+<header class="header">
+  <nav class="navbar">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="{% static 'images/logo.png' %}" alt="Nexoréva Logo" class="logo">
+    </div>
+  </nav>
+</header>
+
+<!-- Main Content -->
 <div class="container">
-    <form method="post">
-        {% csrf_token %}
-        
-        <!-- Staff Code Section -->
-        <div class="input-group">
-            <input type="text" placeholder="Enter staff_code" name="staff_code" value="{{ request.POST.staff_code }}" required>
-            <button type="submit" name="fetch">Fetch Tasks</button>
-        </div>
+    <h2>Task Status</h2>
+    
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Staff Code Section -->
+            <div class="input-group">
+                <input type="text" placeholder="Enter staff code" name="staff_code" value="{{ request.POST.staff_code }}" required>
+                <button type="submit" name="fetch">Fetch Tasks</button>
+            </div>
+        </form>
 
         {% if error_message %}
-        <div class="error-message">
-            {{ error_message }}
+        <div class="messages">
+            <div class="message error">{{ error_message }}</div>
         </div>
         {% endif %}
 
         {% if assigned_tasks %}
         <!-- Task Table Section -->
         <div class="task-section">
-            <h2>Assigned Tasks</h2>
+            <!-- Styled caption -->
+            <div class="table-caption">
+                List of assigned tasks to <span class="staff-highlight">{{ name }}</span>
+            </div>
+            
             {% if assigned_tasks.count > 0 %}
-            <table>
-                <caption>List of assigned tasks to {{ name }}</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Task Code</th>
-                        <th scope="col">Task Title</th>
-                        <th scope="col">Task Description</th>
-                        <th scope="col">Start Date</th>
-                        <th scope="col">End Date</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for task in assigned_tasks %}
-                    <tr>
-                        <td>{{ task.task_code }}</td>
-                        <td>{{ task.task_title }}</td>
-                        <td>{{ task.description }}</td>
-                        <td>{{ task.start_date }}</td>
-                        <td>{{ task.end_date }}</td>
-                        <td>{{ task.status }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table class="styled-table task-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Task Code</th>
+                            <th scope="col">Task Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in assigned_tasks %}
+                        <tr>
+                            <td class="task-code-cell">{{ task.task_code }}</td>
+                            <td class="task-title-cell">{{ task.task_title }}</td>
+                            <td class="task-description-cell">{{ task.description|truncatewords:8 }}</td>
+                            <td class="date-cell">{{ task.start_date|date:"M d, Y" }}</td>
+                            <td class="date-cell">{{ task.end_date|date:"M d, Y" }}</td>
+                            <td class="status-cell">
+                                <span class="status-indicator {{ task.status|lower }}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
             <div class="button-group">
-                <a href="{% url 'update_status' staff_code  %}" class="btn-link">Update Status</a>
+                <a href="{% url 'update_status' staff_code %}" class="leave-btn">Update Status</a>
             </div>
             {% else %}
             <div class="no-tasks-message">
-                <p>No tasks assigned to {{ name }}.</p>
+                <p>No tasks assigned to <span class="staff-highlight">{{ name }}</span>.</p>
             </div>
             {% endif %}
         </div>
         {% endif %}
-    </form>
+
+        <a href="{% url 'attendance_home' %}" class="leave-btn back-button">Back to Attendance</a>
+    </div>
 </div>
 {% endblock %}

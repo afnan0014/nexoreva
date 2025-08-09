@@ -1,39 +1,128 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/assignment.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Search Task by Unicode</h2>
-<form method="get">
-    <input type="text" name="q" placeholder="Enter Task Unicode" required>
-    <button type="submit">Search</button>
-</form>
+<div class="main-content">
+  <div class="container">
+    <h2>Search Task by Unicode</h2>
 
-{% if task %}
-    <h3>Task Details</h3>
-    <p><strong>Title:</strong> {{ task.title }}</p>
-    <p><strong>Description:</strong> {{ task.description }}</p>
-    <p><strong>Deadline:</strong> {{ task.deadline }}</p>
-    <p><strong>Unicode:</strong> {{ task.unicode }}</p>
+    <!-- Search Form -->
+    <div class="search-section">
+      <h3 class="section-title">
+        <i class="bi bi-search"></i>
+        Task Search
+      </h3>
+      <form method="get" class="search-form">
+        <div class="search-grid single">
+          <div class="input-group">
+            <input type="text" name="q" placeholder=" " value="{{ request.GET.q }}" required>
+            <label>Enter Task Unicode</label>
+          </div>
+          <div class="search-action">
+            <button type="submit" class="btn-search">
+              <i class="bi bi-search"></i>
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
 
-    <h4>Assigned Staff</h4>
-    <table class="table table-bordered">
-        <thead>
+    {% if task %}
+    <!-- Task Details Card -->
+    <div class="detail-card task-card">
+      <div class="card-header">
+        <h4>
+          <i class="bi bi-clipboard-check"></i>
+          Task Details
+        </h4>
+        <div class="task-code-badge">{{ task.unicode }}</div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Title:</span>
+          <span class="detail-value">{{ task.title }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Description:</span>
+          <span class="detail-value">{{ task.description }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Deadline:</span>
+          <span class="detail-value">{{ task.deadline|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Unicode:</span>
+          <span class="detail-value task-unicode">{{ task.unicode }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assigned Staff Section -->
+    <div class="staff-section">
+      <h3 class="section-title">
+        <i class="bi bi-people"></i>
+        Assigned Staff
+      </h3>
+      
+      <div class="table-wrapper">
+        <table class="styled-table staff-table">
+          <thead>
             <tr>
-                <th>Staff Code</th>
-                <th>Username</th>
-                <th>Status</th>
+              <th class="col-code">Staff Code</th>
+              <th class="col-username">Username</th>
+              <th class="col-status">Status</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             {% for a in assigned_staff %}
             <tr>
-                <td>{{ a.staff.unicode }}</td>
-                <td>{{ a.staff.username }}</td>
-                <td>{{ a.work_status }}</td>
+              <td class="col-code">
+                <div class="staff-code-cell">{{ a.staff.unicode }}</div>
+              </td>
+              <td class="col-username">
+                <div class="username-cell">{{ a.staff.username }}</div>
+              </td>
+              <td class="col-status">
+                {% if a.work_status == "Completed" %}
+                  <span class="status-indicator completed">{{ a.work_status }}</span>
+                {% elif a.work_status == "In Progress" %}
+                  <span class="status-indicator in-progress">{{ a.work_status }}</span>
+                {% elif a.work_status == "Pending" %}
+                  <span class="status-indicator pending">{{ a.work_status }}</span>
+                {% else %}
+                  <span class="status-indicator not-started">{{ a.work_status }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-person-x"></i>
+                  <p>No staff assigned to this task.</p>
+                </div>
+              </td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-{% elif query %}
-    <p>No task found with this unicode.</p>
-{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% elif request.GET.q %}
+    <div class="messages">
+      <div class="message error">
+        <i class="bi bi-exclamation-triangle"></i>
+        No task found with this unicode.
+        <button class="message-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

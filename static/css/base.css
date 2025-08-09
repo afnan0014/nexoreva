@@ -1,0 +1,545 @@
+:root {
+  --primary-gradient: linear-gradient(90deg, #27c5ff 0%, #673ff5 100%);
+  --primary-color: #3d6bf6;
+  --accent-color: #27c5ff;
+  --bg: #f7f8fa;
+  --white: #ffffff;
+  --border-radius: 1rem;
+  --shadow: 0 4px 24px 0 rgba(39, 197, 255, 0.07), 0 1.5px 3px 0 rgba(103, 63, 245, 0.06);
+  --text-muted: #6b7280;
+  --error-color: #ef4444;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --sidebar-width: 280px;
+}
+/* Add these font styles to your existing base.css */
+
+/* Global Typography */
+body {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8em;
+}
+
+h1 {
+  font-size: 2.2em;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+/* Page titles with gradient */
+.page-title,
+.dashboard-title,
+.container > h2 {
+  font-size: 2.2em !important;
+  font-weight: 800 !important;
+  background: var(--primary-gradient) !important;
+  color: transparent !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  text-align: center !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 2em !important;
+}
+
+/* Section titles */
+.section-title,
+.form-section h3 {
+  font-size: 1.4em !important;
+  font-weight: 700 !important;
+  color: #222846 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: 1.5em !important;
+}
+
+/* Navigation items */
+.nav-item,
+.nav-item span {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 0.95em !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Button text */
+button,
+.btn,
+.btn-submit,
+.btn-cancel,
+.login-btn,
+.leave-btn {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* Form labels */
+label {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Input and form elements */
+input,
+select,
+textarea {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Table headers */
+.styled-table th,
+.table th {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  font-size: 0.85em !important;
+}
+
+/* Table cells */
+.styled-table td,
+.table td {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Status indicators and badges */
+.status-indicator,
+.role-badge,
+.badge {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+}
+
+/* Messages */
+.message,
+.alert {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Staff code and special text */
+.staff-code-cell,
+.task-code-cell {
+  font-family: 'Inter', 'Monaco', 'Consolas', monospace !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Stats numbers */
+.stat-number {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Stats labels */
+.stat-label {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Card titles */
+.card-title,
+.overview-card h4,
+.staff-header h3 {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Paragraphs and body text */
+p,
+.overview-card p,
+.staff-details {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.6 !important;
+}
+
+/* Error messages */
+.error-message {
+  font-family: 'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Mobile font adjustments */
+@media (max-width: 768px) {
+  h1, .page-title, .dashboard-title, .container > h2 {
+    font-size: 1.8em !important;
+  }
+  
+  h2 {
+    font-size: 1.5em !important;
+  }
+  
+  h3, .section-title {
+    font-size: 1.2em !important;
+  }
+  
+  .nav-item span {
+    font-size: 0.9em !important;
+  }
+}
+
+@media (max-width: 600px) {
+  h1, .page-title, .dashboard-title, .container > h2 {
+    font-size: 1.5em !important;
+  }
+  
+  h2 {
+    font-size: 1.3em !important;
+  }
+  
+  h3, .section-title {
+    font-size: 1.1em !important;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    font-size: 0.85em !important;
+  }
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: #222846;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logo {
+  padding: 1.5em;
+  text-align: center;
+  border-bottom: 1px solid #3a4463;
+  margin-bottom: 1em;
+}
+
+.sidebar-logo-img {
+  height: 60px;
+  width: auto;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 0 1.5em 0;
+}
+
+.nav-section {
+  flex: 1;
+}
+
+.nav-section-title {
+  color: #9ca3af;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0 1.5em 1em 1.5em;
+  margin: 0;
+  border-bottom: 1px solid #3a4463;
+  margin-bottom: 1em;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 1em 1.5em;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background: rgba(61, 107, 246, 0.1);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
+  text-decoration: none;
+}
+
+.nav-item.active {
+  background: rgba(61, 107, 246, 0.15);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
+}
+
+.nav-item i {
+  font-size: 1.2em;
+  margin-right: 0.8em;
+  width: 20px;
+  text-align: center;
+}
+
+.nav-item span {
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+/* User Info Section */
+.nav-user-section {
+  border-top: 1px solid #3a4463;
+  padding-top: 1em;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 0.8em 1.5em;
+  color: #9ca3af;
+  font-size: 0.9em;
+  border-bottom: 1px solid #3a4463;
+  margin-bottom: 0.5em;
+}
+
+.user-info i {
+  font-size: 1.2em;
+  margin-right: 0.6em;
+  color: var(--accent-color);
+}
+
+.user-info span {
+  font-weight: 500;
+}
+
+/* Logout Button */
+.nav-logout {
+  padding: 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  padding: 1em 1.5em;
+  color: #ef4444;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  border-radius: 0.5em;
+  margin: 0 0.5em;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-left-color: #ef4444;
+  text-decoration: none;
+  transform: translateX(3px);
+}
+
+.logout-btn i {
+  font-size: 1.2em;
+  margin-right: 0.8em;
+  width: 20px;
+  text-align: center;
+}
+
+.logout-btn span {
+  font-weight: 600;
+}
+
+/* Main Content with Sidebar */
+.with-sidebar {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Messages Container */
+.messages-container {
+  padding: 1em 2em 0 2em;
+  position: relative;
+  z-index: 10;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  padding: 1em 1.5em;
+  margin-bottom: 1em;
+  border-radius: 0.8em;
+  border-left: 4px solid;
+  font-weight: 500;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message.success {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: var(--success-color);
+}
+
+.message.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: var(--error-color);
+}
+
+.message.info {
+  background: #eff6ff;
+  color: #1e40af;
+  border-color: var(--primary-color);
+}
+
+.message.warning {
+  background: #fefce8;
+  color: #a16207;
+  border-color: var(--warning-color);
+}
+
+.message i {
+  font-size: 1.2em;
+  margin-right: 0.8em;
+}
+
+.message-close {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: inherit;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.message-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Scrollbar styling for sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 250px;
+  }
+  
+  .sidebar-logo-img {
+    height: 50px;
+  }
+  
+  .nav-item {
+    padding: 0.8em 1em;
+  }
+  
+  .nav-item span {
+    font-size: 0.9em;
+  }
+  
+  .messages-container {
+    padding: 1em;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+  
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .with-sidebar {
+    margin-left: 0;
+  }
+  
+  .messages-container {
+    padding: 0.5em;
+  }
+  
+  .user-info {
+    padding: 0.6em 1em;
+    font-size: 0.85em;
+  }
+  
+  .logout-btn {
+    padding: 0.8em 1em;
+  }
+  
+  .message {
+    padding: 0.8em 1em;
+    margin-bottom: 0.8em;
+  }
+}

@@ -35,8 +35,8 @@ def task_status(request):
     return render(request, 'task_trakking/task_status.html', {
         'assigned_tasks': assigned_tasks,
         'error_message': error_message,
-        'name':staff_name,
-        'staff_code':staff_code
+        'name': staff_name,
+        'staff_code': staff_code
     })
 
 def update_status(request, staff_id):

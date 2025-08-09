@@ -1,76 +1,122 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'course_css/course_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="mb-4">Course Details</h2>
-  
-  <!-- Course Details Table -->
-  <table class="enroll-table">
-    <thead>
-      <tr>
-        <th>Attribute</th>
-        <th>Details</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Course Name</td>
-        <td>{{ course.name }}</td>
-      </tr>
-      <tr>
-        <td>Sub Column</td>
-        <td>{{ course.sub_column }}</td>
-      </tr>
-      <tr>
-        <td>Unicode</td>
-        <td>{{ course.unicode }}</td>
-      </tr>
-      <tr>
-        <td>Description</td>
-        <td>{{ course.description }}</td>
-      </tr>
-      <tr>
-        <td>Fees</td>
-        <td>{{ course.fees }}</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="main-content">
+  <div class="container">
+    <h2>Course Details</h2>
 
-  <h3 class="mt-4">Enrolled Staff</h3>
+    <!-- Course Information Card -->
+    <div class="detail-card">
+      <div class="detail-header">
+        <h3>
+          <i class="bi bi-journal-bookmark"></i>
+          {{ course.name }}
+        </h3>
+        <div class="unicode-badge">{{ course.unicode }}</div>
+      </div>
 
-  {% if enrollments %}
-    <table class="enroll-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Full Name</th>
-          <th>Staff Code</th>
-          <th>Role</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for enrollment in enrollments %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ enrollment.staff.full_name }}</td>
-            <td>{{ enrollment.staff.staff_code }}</td>
-            <td>{{ enrollment.staff.role }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No one enrolled yet.</p>
-  {% endif %}
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Sub Column:</span>
+          <span class="detail-value">{{ course.sub_column }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Start Date:</span>
+          <span class="detail-value">{{ course.start_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">End Date:</span>
+          <span class="detail-value">{{ course.end_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Fees:</span>
+          <span class="detail-value fees-value">₹{{ course.fees }}</span>
+        </div>
+        <div class="detail-item full-width">
+          <span class="detail-label">Description:</span>
+          <span class="detail-value">{{ course.description }}</span>
+        </div>
+      </div>
+    </div>
 
-  <div class="btn-container">
-    <a href="{% url 'enroll_user' course.id %}" class="btn-success">Enroll New Member</a>
+    <!-- Enrolled Staff Section -->
+    <div class="enrollment-section">
+      <div class="section-header">
+        <h3>
+          <i class="bi bi-people"></i>
+          Enrolled Staff
+        </h3>
+        <a href="{% url 'enroll_user' course.id %}" class="btn-enroll">
+          <i class="bi bi-person-plus"></i>
+          Enroll New Member
+        </a>
+      </div>
+
+      {% if enrollments %}
+      <div class="table-wrapper">
+        <table class="styled-table enrollment-table">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th class="col-name">Full Name</th>
+              <th class="col-code">Staff Code</th>
+              <th class="col-role">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for enrollment in enrollments %}
+            <tr>
+              <td class="col-num">{{ forloop.counter }}</td>
+              <td class="col-name">
+                <div class="staff-name-cell">{{ enrollment.staff.full_name }}</div>
+              </td>
+              <td class="col-code">
+                <div class="staff-code-cell">{{ enrollment.staff.staff_code }}</div>
+              </td>
+              <td class="col-role">
+                {% if enrollment.staff.role == "Employee" %}
+                  <span class="role-badge employee">{{ enrollment.staff.role }}</span>
+                {% else %}
+                  <span class="role-badge intern">{{ enrollment.staff.role }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="no-enrollments">
+        <div class="empty-content">
+          <i class="bi bi-people"></i>
+          <h4>No enrollments yet</h4>
+          <p>No staff members are currently enrolled in this course.</p>
+          <a href="{% url 'enroll_user' course.id %}" class="btn-add-first">
+            <i class="bi bi-person-plus"></i>
+            Enroll First Member
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Actions -->
+    <div class="detail-actions">
+      <a href="{% url 'edit_course' course.id %}" class="btn-edit">
+        <i class="bi bi-pencil-square"></i>
+        Edit Course
+      </a>
+      <a href="{% url 'course_list' %}" class="btn-cancel">
+        <i class="bi bi-arrow-left"></i>
+        Back to Courses
+      </a>
+    </div>
   </div>
 </div>
-
 {% endblock %}

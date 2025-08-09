@@ -27,6 +27,30 @@ a.btn-success:hover {
   background-color: #218838;
 }
 
+/* Button group styling */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+a.btn-primary {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+a.btn-primary:hover {
+  background-color: #0056b3;
+  color: white;
+  text-decoration: none;
+}
+
 .course-table {
   width: 100%;
   border-collapse: collapse;

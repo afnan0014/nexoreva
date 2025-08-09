@@ -2,167 +2,83 @@
 {% load static %}
 
 {% block extra_css %}
-<style>
-    .update-status-container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 30px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .form-title {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 24px;
-    }
-    
-    .staff-info {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        border-left: 4px solid #007bff;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #333;
-    }
-    
-    .form-group input,
-    .form-group select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    
-    .form-group input[readonly] {
-        background-color: #f8f9fa;
-        color: #666;
-    }
-    
-    .submit-btn {
-        background: #007bff;
-        color: white;
-        padding: 12px 30px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .submit-btn:hover {
-        background: #0056b3;
-    }
-    
-    .message {
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-    
-    .success-message {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    
-    .error-message {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    
-    .back-link {
-        text-align: center;
-        margin-top: 20px;
-    }
-    
-    .back-link a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    
-    .back-link a:hover {
-        text-decoration: underline;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/attendance_home.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="update-status-container">
-    <h1 class="form-title">Update Task Status</h1>
-    
+<!-- Header/Navbar -->
+<header class="header">
+  <nav class="navbar">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="{% static 'images/logo.png' %}" alt="Nexoréva Logo" class="logo">
+    </div>
+  </nav>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <h2>Update Task Status</h2>
+
     {% if staff_name %}
     <div class="staff-info">
         <strong>Staff:</strong> {{ staff_name }}
     </div>
     {% endif %}
-    
+
     {% if success_message %}
-    <div class="message success-message">
-        {{ success_message }}
+    <div class="messages">
+        <div class="message success">{{ success_message }}</div>
     </div>
     {% endif %}
-    
+
     {% if error_message %}
-    <div class="message error-message">
-        {{ error_message }}
+    <div class="messages">
+        <div class="message error">{{ error_message }}</div>
     </div>
     {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="{{ frm.staff_code.id_for_label }}">{{ frm.staff_code.label }}</label>
-            {{ frm.staff_code }}
-            {% if frm.staff_code.errors %}
-            <div class="error-message">
-                {{ frm.staff_code.errors }}
+
+    <div class="form-container">
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Staff Code -->
+            <div class="input-group{% if frm.staff_code.errors %} has-error{% endif %}">
+                {{ frm.staff_code }}
+                <label for="{{ frm.staff_code.id_for_label }}">Staff Code</label>
+                {% if frm.staff_code.errors %}
+                <div class="error-message">
+                    {{ frm.staff_code.errors|striptags }}
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            <label for="{{ frm.task_code.id_for_label }}">{{ frm.task_code.label }}</label>
-            {{ frm.task_code }}
-            {% if frm.task_code.errors %}
-            <div class="error-message">
-                {{ frm.task_code.errors }}
+
+            <!-- Task Code -->
+            <div class="input-group{% if frm.task_code.errors %} has-error{% endif %}">
+                {{ frm.task_code }}
+                <label for="{{ frm.task_code.id_for_label }}">Task Code</label>
+                {% if frm.task_code.errors %}
+                <div class="error-message">
+                    {{ frm.task_code.errors|striptags }}
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            <label for="{{ frm.status.id_for_label }}">{{ frm.status.label }}</label>
-            {{ frm.status }}
-            {% if frm.status.errors %}
-            <div class="error-message">
-                {{ frm.status.errors }}
+
+            <!-- Status -->
+            <div class="input-group{% if frm.status.errors %} has-error{% endif %}">
+                {{ frm.status }}
+                <label for="{{ frm.status.id_for_label }}">Status</label>
+                {% if frm.status.errors %}
+                <div class="error-message">
+                    {{ frm.status.errors|striptags }}
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
-        
-        <button type="submit" class="submit-btn">Update Status</button>
-    </form>
-    
-    <div class="back-link">
-        <a href="{% url 'task-status' %}">← Back to Task Status</a>
+
+            <button type="submit">Update Status</button>
+        </form>
+
+        <a href="{% url 'task-status' %}" class="leave-btn back-button">← Back to Task Status</a>
     </div>
 </div>
 {% endblock %}
-

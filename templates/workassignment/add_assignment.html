@@ -1,98 +1,201 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
+{% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/add_assignment.css' %}">
+<link rel="stylesheet" href="{% static 'css/assignment.css' %}">
+{% endblock %}
 
-<div class="container mt-4">
-    <h3>Add Work Assignment</h3>
+{% block content %}
+<div class="main-content">
+  <div class="container">
+    <h2>Add Work Assignment</h2>
 
-    <!-- Staff Code + Task Code Search Form -->
-    <form method="post" action="" class="form-inline mb-4">
+    <!-- Staff Code + Task Code Search Form - Single Row -->
+    <div class="search-section">
+      <h3 class="section-title">
+        <i class="bi bi-search"></i>
+        Search Staff & Task
+      </h3>
+      <form method="post" action="" class="search-form">
         {% csrf_token %}
-        <input type="text" name="staff_code" placeholder="Enter Staff Code" class="form-control mr-2" value="{{ staff_code }}">
-        <input type="text" name="task_code" placeholder="Enter Task Code" class="form-control mr-2" value="{{ task_code }}">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
+        <div class="search-row">
+          <div class="input-group">
+            <input type="text" name="staff_code" placeholder=" " value="{{ staff_code }}" required>
+            <label>Enter Staff Code</label>
+          </div>
+          <div class="input-group">
+            <input type="text" name="task_code" placeholder=" " value="{{ task_code }}">
+            <label>Enter Task Code (Optional)</label>
+          </div>
+          <div class="search-button-wrapper">
+            <button type="submit" class="btn-search">
+              <i class="bi bi-search"></i>
+              Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
 
     {% if task %}
-        <!-- Task Details -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5>Task Found:</h5>
-                <p><strong>Task Title:</strong> {{ task.task_title }}</p>
-                <p><strong>Description:</strong> {{ task.description }}</p>
-                <p><strong>Start Date:</strong> {{ task.start_date }}</p>
-                <p><strong>End Date:</strong> {{ task.end_date }}</p>
-                <p><strong>Assigned To:</strong> {{ task.assigned_to.full_name }}</p>
-            </div>
+    <!-- Task Details Card -->
+    <div class="detail-card task-card">
+      <div class="card-header">
+        <h4>
+          <i class="bi bi-clipboard-check"></i>
+          Task Found
+        </h4>
+        <div class="task-code-badge">{{ task.task_code }}</div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Task Title:</span>
+          <span class="detail-value">{{ task.task_title }}</span>
         </div>
+        <div class="detail-item">
+          <span class="detail-label">Description:</span>
+          <span class="detail-value">{{ task.description }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Start Date:</span>
+          <span class="detail-value">{{ task.start_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">End Date:</span>
+          <span class="detail-value">{{ task.end_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Assigned To:</span>
+          <span class="detail-value">{{ task.assigned_to.full_name }}</span>
+        </div>
+      </div>
+    </div>
     {% endif %}
 
     {% if staff %}
-        <!-- Staff Details -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <p><strong>Name:</strong> {{ staff.full_name }}</p>
-                <p><strong>Email:</strong> {{ staff.email }}</p>
-                <p><strong>Department:</strong> {{ staff.department }}</p>
-            </div>
+    <!-- Staff Details Card -->
+    <div class="detail-card staff-card">
+      <div class="card-header">
+        <h4>
+          <i class="bi bi-person"></i>
+          Staff Details
+        </h4>
+        <div class="staff-code-badge">{{ staff.staff_code }}</div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Name:</span>
+          <span class="detail-value">{{ staff.full_name }}</span>
         </div>
+        <div class="detail-item">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">{{ staff.email }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Department:</span>
+          <span class="detail-value">{{ staff.department }}</span>
+        </div>
+      </div>
+    </div>
 
-        <h5>Assign Task to {{ staff.full_name }}</h5>
-
-        <!-- Task Assignment Form -->
+    <!-- Assignment Form -->
+    <div class="form-container">
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="bi bi-clipboard-plus"></i>
+          Assign Task to {{ staff.full_name }}
+        </h3>
+        
         <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label for="id_task_code"><strong>Task Code (Auto-generated):</strong></label>
-                {{ form.task_code }}
+          {% csrf_token %}
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.task_code.errors %} has-error{% endif %}">
+              {{ form.task_code }}
+              <label for="{{ form.task_code.id_for_label }}">Task Code (Auto-generated)</label>
+              {% if form.task_code.errors %}
+                <div class="error-message">{{ form.task_code.errors|striptags }}</div>
+              {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_task_title">Task Title:</label>
-                {{ form.task_title }}
+            <div class="input-group{% if form.task_title.errors %} has-error{% endif %} full-width">
+              {{ form.task_title }}
+              <label for="{{ form.task_title.id_for_label }}">Task Title</label>
+              {% if form.task_title.errors %}
+                <div class="error-message">{{ form.task_title.errors|striptags }}</div>
+              {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_description">Description:</label>
-                {{ form.description }}
+            <div class="input-group{% if form.description.errors %} has-error{% endif %} full-width">
+              {{ form.description }}
+              <label for="{{ form.description.id_for_label }}">Description</label>
+              {% if form.description.errors %}
+                <div class="error-message">{{ form.description.errors|striptags }}</div>
+              {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_start_date">Start Date:</label>
-                {{ form.start_date }}
+            <div class="input-group{% if form.start_date.errors %} has-error{% endif %}">
+              {{ form.start_date }}
+              <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+              {% if form.start_date.errors %}
+                <div class="error-message">{{ form.start_date.errors|striptags }}</div>
+              {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_end_date">End Date:</label>
-                {{ form.end_date }}
+            <div class="input-group{% if form.end_date.errors %} has-error{% endif %}">
+              {{ form.end_date }}
+              <label for="{{ form.end_date.id_for_label }}">End Date</label>
+              {% if form.end_date.errors %}
+                <div class="error-message">{{ form.end_date.errors|striptags }}</div>
+              {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_attachment">Attachment:</label>
-                {{ form.attachment }}
+            <div class="file-input-group{% if form.attachment.errors %} has-error{% endif %}">
+              {{ form.attachment }}
+              <label for="{{ form.attachment.id_for_label }}">Attachment</label>
+              {% if form.attachment.errors %}
+                <div class="error-message">{{ form.attachment.errors|striptags }}</div>
+              {% endif %}
             </div>
+          </div>
 
-            <input type="hidden" name="assigned_to" value="{{ staff.id }}">
-            <button type="submit" class="btn btn-success">Submit Assignment</button>
+          <input type="hidden" name="assigned_to" value="{{ staff.id }}">
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">
+              <i class="bi bi-check-circle"></i>
+              Submit Assignment
+            </button>
+            <a href="{% url 'viewwork_assignment_userlist_staff' %}" class="btn-cancel">
+              <i class="bi bi-arrow-left"></i>
+              Back to Assignments
+            </a>
+          </div>
         </form>
+      </div>
+    </div>
 
     {% elif staff_code %}
-        <div class="alert alert-danger">
-            No staff found with code "<strong>{{ staff_code }}</strong>".
-        </div>
+    <div class="messages">
+      <div class="message error">
+        <i class="bi bi-exclamation-triangle"></i>
+        No staff found with code "<strong>{{ staff_code }}</strong>".
+        <button class="message-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+    </div>
     {% endif %}
+  </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    flatpickr("input[type='date']", {
-        altInput: true,
-        altFormat: "F j, Y",
-        dateFormat: "Y-m-d",
-    });
+  flatpickr("input[type='date']", {
+    altInput: true,
+    altFormat: "F j, Y",
+    dateFormat: "Y-m-d",
+  });
 </script>
 {% endblock %}

@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/certificate.css' %}">
+{% endblock %}
+
+{% block title %}Certificate Management{% endblock %}
+
+{% block content %}
+<!-- Main Content Area -->
+<div class="main-content">
+    <div class="dashboard-content">
+        <h2 class="dashboard-title">Certificate Management System</h2>
+        
+        
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'generateTab')">
+                🎨 Generate Certificate
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'listTab')">
+                📜 Certificate Records
+            </button>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Generate Certificate Tab -->
+        <div id="generateTab" class="tab-content active">
+            <div class="dashboard-section">
+                <h3 class="section-title">Certificate Generation</h3>
+                <div class="form-container">
+                    <div class="form-card">
+                        <form method="POST" id="certificateForm" class="form-grid">
+                            {% csrf_token %}
+                            
+                            <!-- Staff Code Input -->
+                            <div class="input-group">
+                                {{ form.staff_code }}
+                                <label for="{{ form.staff_code.id_for_label }}">{{ form.staff_code.label }}</label>
+                                {% if form.staff_code.errors %}
+                                    <div class="error-message">
+                                        {{ form.staff_code.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Course Code Input -->
+                            <div class="input-group">
+                                {{ form.course_unicode }}
+                                <label for="{{ form.course_unicode.id_for_label }}">{{ form.course_unicode.label }}</label>
+                                {% if form.course_unicode.errors %}
+                                    <div class="error-message">
+                                        {{ form.course_unicode.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-actions full-width">
+                                <button type="submit" id="generateBtn" class="btn-submit">
+                                    <i class="bi bi-magic"></i>
+                                    <span id="generateBtnText">Generate Certificate</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Certificate Result -->
+            {% if certificate_url %}
+                <div class="dashboard-section">
+                    <div class="success-card">
+                        <div class="success-header">
+                            <div class="success-icon">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h3>Certificate Generated Successfully!</h3>
+                            <p>Your professional certificate is ready for download and sharing.</p>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <a href="{{ certificate_url }}" download class="btn-download">
+                                <i class="bi bi-download"></i>
+                                Download Certificate PNG
+                            </a>
+                            <button class="btn-print" onclick="window.print()">
+                                <i class="bi bi-printer"></i>
+                                Print Certificate
+                            </button>
+                        </div>
+
+                        <!-- WhatsApp Share Section -->
+                        <div class="whatsapp-card">
+                            <div class="card-header">
+                                <i class="bi bi-whatsapp"></i>
+                                <h4>Share Certificate via WhatsApp</h4>
+                            </div>
+                            <p class="card-description">
+                                Click the button below to share certificate details via WhatsApp. The message will include congratulations, course details, certificate ID, and download link.
+                            </p>
+                            
+                            <div class="whatsapp-actions">
+                                <a href="{{ whatsapp_share_link }}" target="_blank" class="btn-whatsapp">
+                                    <i class="bi bi-whatsapp"></i>
+                                    Share via WhatsApp
+                                </a>
+                            </div>
+                            
+                            <div class="whatsapp-note">
+                                Opens WhatsApp with pre-filled message
+                            </div>
+                        </div>
+                        
+                        <div class="preview-card">
+                            <div class="card-header">
+                                <h4>Certificate Preview</h4>
+                                <button class="btn-fullscreen" onclick="openFullscreen()">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                    View Fullscreen
+                                </button>
+                            </div>
+                            <div class="preview-wrapper">
+                                <img src="{{ certificate_url }}" alt="Generated Certificate" class="certificate-image" onclick="openFullscreen()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="generate-another-card">
+                        <h4>Generate Another Certificate</h4>
+                        <p>Create certificates for more students or different courses</p>
+                        <a href="{% url 'generate_certificate' %}" class="btn-generate-another">
+                            <i class="bi bi-plus-circle"></i>
+                            Generate Another
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Certificate Records Tab -->
+        <div id="listTab" class="tab-content">
+            <!-- Statistics Bar -->
+            <div class="dashboard-section">
+                <h3 class="section-title">Statistics Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-award-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">{{ all_certificates|length }}</div>
+                            <div class="stat-label">Total Certificates</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">{{ today_certificates|length|default:0 }}</div>
+                            <div class="stat-label">Generated Today</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">{{ unique_courses|length|default:0 }}</div>
+                            <div class="stat-label">Unique Courses</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate Records -->
+            <div class="dashboard-section">
+                <h3 class="section-title">Certificate Records</h3>
+                <div class="certificates-grid">
+                    {% if all_certificates %}
+                        {% for certificate in all_certificates %}
+                            <div class="certificate-record-card">
+                                <div class="certificate-header">
+                                    <div class="certificate-title">
+                                        <i class="bi bi-person-fill"></i>
+                                        <h4>{{ certificate.staff.full_name }}</h4>
+                                    </div>
+                                    <div class="certificate-status">Active</div>
+                                </div>
+                                
+                                <div class="certificate-info">
+                                    <div class="info-item">
+                                        <span class="info-label">Course</span>
+                                        <span class="info-value">{{ certificate.course.name }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Issue Date</span>
+                                        <span class="info-value">{{ certificate.issue_date|date:"d M Y" }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Certificate ID</span>
+                                        <span class="info-value">{{ certificate.certificate_id }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Generated On</span>
+                                        <span class="info-value">{{ certificate.generated_on|date:"d M Y, H:i" }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="certificate-actions">
+                                    <a href="{{ certificate.certificate_file.url }}" target="_blank" class="btn btn-view">
+                                        <i class="bi bi-eye-fill"></i>
+                                        View
+                                    </a>
+                                    <a href="{{ certificate.certificate_file.url }}" download class="btn btn-download-small">
+                                        <i class="bi bi-download"></i>
+                                        Download
+                                    </a>
+                                    <a href="#" class="btn btn-whatsapp-small whatsapp-share-btn" data-certificate-id="{{ certificate.certificate_id }}">
+                                        <i class="bi bi-whatsapp"></i>
+                                        Share
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">📜</div>
+                            <h3>No Certificates Found</h3>
+                            <p>Generate your first certificate using the "Generate Certificate" tab.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fullscreen Modal -->
+<div id="fullscreenModal" class="fullscreen-modal" onclick="closeFullscreen()">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeFullscreen()">&times;</span>
+        <img src="{{ certificate_url }}" alt="Certificate Fullscreen" class="fullscreen-image">
+    </div>
+</div>
+
+<script>
+    // Tab functionality
+    function openTab(evt, tabName) {
+        var i, tabContent, tabButtons;
+        
+        tabContent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabContent.length; i++) {
+            tabContent[i].classList.remove("active");
+        }
+        
+        tabButtons = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove("active");
+        }
+        
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // Fullscreen functionality
+    function openFullscreen() {
+        document.getElementById('fullscreenModal').style.display = 'flex';
+    }
+
+    function closeFullscreen() {
+        document.getElementById('fullscreenModal').style.display = 'none';
+    }
+
+    // Certificate generation functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('certificateForm');
+        const generateBtn = document.getElementById('generateBtn');
+        
+        if (form) {
+            form.addEventListener('submit', function() {
+                generateBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Generating...';
+                generateBtn.disabled = true;
+                
+                setTimeout(function() {
+                    generateBtn.innerHTML = '<i class="bi bi-magic"></i> Generate Certificate';
+                    generateBtn.disabled = false;
+                }, 5000);
+            });
+        }
+
+        // Input validation feedback
+        const inputs = document.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() !== '') {
+                    this.parentElement.classList.remove('has-error');
+                }
+            });
+        });
+
+        // WhatsApp share functionality
+        const whatsappShareBtns = document.querySelectorAll('.whatsapp-share-btn');
+        whatsappShareBtns.forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const certificateId = this.getAttribute('data-certificate-id');
+                
+                if (!certificateId) {
+                    alert('Certificate ID not found.');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('certificate_id', certificateId);
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                
+                try {
+                    const response = await fetch('{% url "get_whatsapp_share_link_ajax" %}', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        window.open(data.whatsapp_link, '_blank');
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                    
+                } catch (error) {
+                    alert('Error generating WhatsApp share link. Please try again.');
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

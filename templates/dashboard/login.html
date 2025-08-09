@@ -5,11 +5,23 @@
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 
-
 {% block content %}
+<!-- Header/Navbar -->
+<header class="header">
+  <nav class="navbar">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="{% static 'images/logo.png' %}" alt="Nexoréva Logo" class="logo">
+    </div>
+    
+    <!-- Back Button -->
+    <a href="{% url 'attendance_home' %}" class="back-nav-btn">← Back</a>
+  </nav>
+</header>
 
+<!-- Main Content -->
 <div class="container mt-5" style="max-width: 400px;">
-  <h2 class="mb-4 text-center"> Admin Login</h2>
+  <h2 class="mb-4 text-center">Admin Login</h2>
 
   {% if messages %}
     {% for message in messages %}

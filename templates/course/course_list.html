@@ -1,48 +1,100 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'course_css/course_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="mb-4">📘 Courses</h2>
+<div class="main-content">
+  <div class="container course-list-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-journal-bookmark"></i>
+        Courses
+      </h2>
+      <div class="header-actions">
+        <a href="{% url 'create_course' %}" class="btn-create-course">
+          <i class="bi bi-plus-square"></i>
+          Create Course
+        </a>
+        <a href="{% url 'add_course' %}" class="btn-add-course">
+          <i class="bi bi-plus-circle"></i>
+          Add Course
+        </a>
+      </div>
+    </div>
 
-  <a href="{% url 'add_course' %}" class="btn-success">➕ Add Course</a>
-
-  <table class="course-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Course Name</th>
-        <th>Sub Column</th>
-        <th>Unicode</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Fees</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for course in courses %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ course.name }}</td>
-        <td>{{ course.sub_column }}</td>
-        <td>{{ course.unicode }}</td>
-        <td>{{ course.start_date }}</td>
-        <td>{{ course.end_date }}</td>
-        <td>{{ course.fees }}</td>
-        <td><a href="{% url 'course_detail' course.id %}" class="view-btn">View More</a> <a href="{% url 'edit_course' course.id %}" class="edit-btn">Edit</a></td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="8">No courses available.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <!-- Courses Table -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table course-table">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th class="col-name">Course Name</th>
+              <th class="col-sub">Sub Column</th>
+              <th class="col-unicode">Course code</th>
+              <th class="col-start">Start Date</th>
+              <th class="col-end">End Date</th>
+              <th class="col-fees">Fees</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for course in courses %}
+            <tr class="course-row">
+              <td class="col-num">{{ forloop.counter }}</td>
+              <td class="col-name">
+                <div class="course-name-cell">{{ course.name }}</div>
+              </td>
+              <td class="col-sub">{{ course.sub_column }}</td>
+              <td class="col-unicode">
+                <div class="unicode-cell">{{ course.unicode }}</div>
+              </td>
+              <td class="col-start date-cell">{{ course.start_date|date:"M d, Y" }}</td>
+              <td class="col-end date-cell">{{ course.end_date|date:"M d, Y" }}</td>
+              <td class="col-fees">
+                <div class="fees-cell">₹{{ course.fees }}</div>
+              </td>
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <a href="{% url 'course_detail' course.id %}" class="action-btn view-btn" title="View Details">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <a href="{% url 'edit_course' course.id %}" class="action-btn edit-btn" title="Edit Course">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-journal-bookmark"></i>
+                  <h4>No courses available</h4>
+                  <p>Start by creating your first course with sub-courses or add a single course.</p>
+                  <div class="empty-actions">
+                    <a href="{% url 'create_course' %}" class="btn-add-first create">
+                      <i class="bi bi-plus-square"></i>
+                      Create Course Structure
+                    </a>
+                    <a href="{% url 'add_course' %}" class="btn-add-first add">
+                      <i class="bi bi-plus-circle"></i>
+                      Add Single Course
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock %}

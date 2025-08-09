@@ -8,6 +8,9 @@ class Course(models.Model):
         ('IT', 'IT'),
         ('Engineering', 'Engineering'),
         ('Medical', 'Medical'),
+        ('Business', 'Business'),
+        ('Arts', 'Arts'),
+        ('Science', 'Science'),
     ]
 
     SUB_COLUMN_CHOICES = [
@@ -24,6 +27,18 @@ class Course(models.Model):
         ('BDS (Bachelor of Dental Surgery)', 'BDS (Bachelor of Dental Surgery)'),
         ('BAMS (Ayurveda)', 'BAMS (Ayurveda)'),
         ('BHMS (Homeopathy)', 'BHMS (Homeopathy)'),
+        ('Accounting', 'Accounting'),
+        ('Marketing', 'Marketing'),
+        ('Finance', 'Finance'),
+        ('Human Resources', 'Human Resources'),
+        ('Painting', 'Painting'),
+        ('Music', 'Music'),
+        ('Dance', 'Dance'),
+        ('Literature', 'Literature'),
+        ('Physics', 'Physics'),
+        ('Chemistry', 'Chemistry'),
+        ('Biology', 'Biology'),
+        ('Mathematics', 'Mathematics'),
     ]
 
     name = models.CharField(max_length=255, choices=COURSE_CHOICES)
@@ -40,13 +55,9 @@ class Course(models.Model):
         super().save(*args, **kwargs)
 
     def generate_unicode(self):
-        # Generate prefix based on course name
-        if self.name == 'IT':
-            prefix = 'IT'
-        elif self.name == 'Engineering':
-            prefix = 'ENG'
-        elif self.name == 'Medical':
-            prefix = 'MED'
+        # Generate prefix based on course name (first 3 letters, uppercase)
+        if self.name:
+            prefix = self.name[:3].upper()
         else:
             prefix = 'GEN'
         

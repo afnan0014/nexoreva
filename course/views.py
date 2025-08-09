@@ -1,6 +1,7 @@
 # course/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from staff.models import Staff
 from .models import Course, Enrollment
@@ -18,8 +19,31 @@ def add_course(request):
             return redirect('course_list')
     else:
         form = CourseForm()
+        
+        # Pre-fill form with data from URL parameters (from create_course)
+        course_name = request.GET.get('course_name')
+        sub_courses = request.GET.get('sub_courses', '')
+        
+        if course_name:
+            form.initial['name'] = course_name
+        if sub_courses:
+            # Set the first sub course as the sub_column
+            sub_courses_list = sub_courses.split('|')
+            if sub_courses_list:
+                form.initial['sub_column'] = sub_courses_list[0]
     
     return render(request, 'course/add_course.html', {'form': form})
+
+def create_course(request):
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name')
+        sub_courses = request.POST.get('sub_courses', '')
+        
+        if course_name:
+            # Redirect to add course form with pre-filled data
+            return redirect(f"{reverse('add_course')}?course_name={course_name}&sub_courses={sub_courses}")
+    
+    return render(request, 'course/create_course.html')
 
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)

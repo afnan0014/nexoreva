@@ -1,25 +1,106 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<!-- External CSS -->
+{% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="{% static 'css/edit_assignment.css' %}">
+<link rel="stylesheet" href="{% static 'css/assignment.css' %}">
+{% endblock %}
 
-<div class="assignment-container">
-    <h2 class="assignment-heading">Edit Assignment</h2>
-    <form method="post" enctype="multipart/form-data" class="assignment-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="submit-btn">Save Changes</button>
-    </form>
+{% block content %}
+<div class="main-content">
+  <div class="container">
+    <h2>Edit Assignment</h2>
+
+    <div class="form-container">
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="bi bi-pencil-square"></i>
+          Update Assignment Details
+        </h3>
+        
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="form-grid">
+            {% for field in form %}
+            {% if field.name == 'attachment' %}
+            <!-- Special handling for attachment field -->
+            <div class="attachment-section">
+              <div class="attachment-header">
+                <label for="{{ field.id_for_label }}" class="document-label">
+                  <i class="bi bi-paperclip"></i>
+                  Attachment
+                </label>
+                {% if form.instance.attachment %}
+                <div class="current-attachment">
+                  <span class="current-label">Currently:</span>
+                  <div class="document-icon-display">
+                    <a href="{{ form.instance.attachment.url }}" target="_blank" class="document-view-link" title="View Attachment">
+                      {% if form.instance.attachment.name|slice:"-4:" == ".pdf" %}
+                        <i class="bi bi-file-earmark-pdf file-icon pdf-icon"></i>
+                      {% elif form.instance.attachment.name|slice:"-4:" == ".doc" or form.instance.attachment.name|slice:"-5:" == ".docx" %}
+                        <i class="bi bi-file-earmark-word file-icon word-icon"></i>
+                      {% elif form.instance.attachment.name|slice:"-4:" == ".jpg" or form.instance.attachment.name|slice:"-4:" == ".png" or form.instance.attachment.name|slice:"-5:" == ".jpeg" %}
+                        <i class="bi bi-file-earmark-image file-icon image-icon"></i>
+                      {% elif form.instance.attachment.name|slice:"-4:" == ".zip" or form.instance.attachment.name|slice:"-4:" == ".rar" %}
+                        <i class="bi bi-file-earmark-zip file-icon zip-icon"></i>
+                      {% else %}
+                        <i class="bi bi-file-earmark-text file-icon doc-icon"></i>
+                      {% endif %}
+                    </a>
+                    <span class="file-status">Uploaded</span>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-input-section">
+                <span class="change-label">Change:</span>
+                <div class="file-input-wrapper">
+                  {{ field }}
+                  {% if field.errors %}
+                    <div class="error-message">{{ field.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <!-- Regular fields -->
+            <div class="input-group{% if field.errors %} has-error{% endif %}{% if field.name == 'description' %} full-width{% endif %}">
+              {{ field }}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {% if field.errors %}
+                <div class="error-message">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">
+              <i class="bi bi-check-circle"></i>
+              Save Changes
+            </button>
+            <a href="{% url 'viewwork_assignment_userlist_staff' %}" class="btn-cancel">
+              <i class="bi bi-arrow-left"></i>
+              Back to Assignments
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}
 
-<!-- Flatpickr JS -->
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    flatpickr("input[type='date']", {
-        dateFormat: "d/m/Y"
-    });
+  flatpickr("input[type='date']", {
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "F j, Y"
+  });
 </script>
 {% endblock %}

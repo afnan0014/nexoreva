@@ -1,24 +1,69 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'course_css/enroll_user.css' %}">
+<link rel="stylesheet" href="{% static 'css/course.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="mb-4">👥 Enroll Staff to {{ course.name }}</h2>
+<div class="main-content">
+  <div class="container">
+    <h2>Enroll Staff to Course</h2>
 
-  {% if error %}
-    <div class="alert-info">{{ error }}</div>
-  {% endif %}
+    <!-- Course Info Card -->
+    <div class="course-info-card">
+      <div class="course-header">
+        <h3>
+          <i class="bi bi-journal-bookmark"></i>
+          {{ course.name }}
+        </h3>
+        <div class="unicode-badge">{{ course.unicode }}</div>
+      </div>
+      <div class="course-details">
+        <span class="course-sub">{{ course.sub_column }}</span>
+        <span class="course-fees">₹{{ course.fees }}</span>
+      </div>
+    </div>
 
-  <form method="post">
-    {% csrf_token %}
-    <label>Enter Staff Unicode:</label>
-    <input type="text" name="staff_code" required>
-    <button type="submit" class="btn-success">Enroll</button>
-  </form>
+    {% if error %}
+    <div class="messages">
+      <div class="message error">
+        <i class="bi bi-exclamation-triangle"></i>
+        {{ error }}
+        <button class="message-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Enrollment Form -->
+    <div class="form-container">
+      <div class="form-section enrollment-form">
+        <h3 class="section-title">
+          <i class="bi bi-person-plus"></i>
+          Enroll Staff Member
+        </h3>
+        
+        <form method="post">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="text" name="staff_code" placeholder=" " required>
+            <label for="staff_code">Enter Staff Unicode</label>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">
+              <i class="bi bi-person-check"></i>
+              Enroll Staff
+            </button>
+            <a href="{% url 'course_detail' course.id %}" class="btn-cancel">
+              <i class="bi bi-arrow-left"></i>
+              Back to Course Details
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock %}

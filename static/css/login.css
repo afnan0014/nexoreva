@@ -56,10 +56,63 @@ body::after {
   50% { transform: translateY(-20px) translateX(15px); opacity: 0.15;}
   100% { transform: translateY(0) translateX(0); opacity: 0.3;}
 }
+
 @keyframes loginBlob2 {
   0% { transform: translateX(0) translateY(0); opacity: 0.3;}
   50% { transform: translateX(-25px) translateY(20px); opacity: 0.12;}
   100% { transform: translateX(0) translateY(0); opacity: 0.3;}
+}
+
+/* Header styling */
+.header {
+  background: #222846;
+  box-shadow: var(--shadow);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1500px;
+  margin: auto;
+  padding: 0 2em;
+  min-height: 92px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 80px;
+  width: auto;
+  left: -9px;
+}
+
+/* Back button in navbar */
+.back-nav-btn {
+  background: transparent;
+  color: #f6f6f8;
+  padding: 0.7em 1.2em;
+  border: 2px solid #f6f6f8;
+  border-radius: 0.7em;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1em;
+}
+
+.back-nav-btn:hover {
+  background: var(--primary-gradient);
+  border-color: var(--accent-color);
+  color: var(--white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(39,197,255,0.15);
 }
 
 /* Main login container */
@@ -72,6 +125,7 @@ body::after {
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   padding: 2.3em 2.1em 2em 2.1em;
+  top: 65px;
 }
 
 h2 {
@@ -151,18 +205,50 @@ button[type="submit"]:hover {
   opacity: 0.95;
 }
 
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1em;
+  }
+  
+  .logo {
+    height: 70px;
+  }
+  
+  .back-nav-btn {
+    padding: 0.6em 1em;
+    font-size: 0.9em;
+  }
+}
+
 @media (max-width: 600px) {
   .container {
     padding: 1.2em 0.5em 1.2em 0.5em;
     max-width: 98vw;
     margin: 2em auto 0 auto;
   }
+  
+  .navbar {
+    flex-direction: column;
+    padding: 0.7em 1em;
+    min-height: 80px;
+  }
+  
+  .back-nav-btn {
+    margin-top: 1em;
+    order: 2;
+  }
+  
+  .logo-container {
+    order: 1;
+  }
+  
   h2 {
     font-size: 1.08em;
   }
+  
   input[type="text"], input[type="password"] {
     font-size: 16px;
     padding: 0.8em;
   }
 }
-

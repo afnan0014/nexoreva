@@ -1,30 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/assignment.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Assignments for {{ user.full_name }}</h2>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-person"></i>
+        Assignments for {{ user.full_name }}
+      </h2>
+      <a href="{% url 'add_assignment' user.id %}" class="btn-add-assignment">
+        <i class="bi bi-plus-circle"></i>
+        Add Assignment
+      </a>
+    </div>
 
-<a href="{% url 'add_assignment' user.id %}">Add Assignment</a>
-
-{% if assignments %}
-    <table class="table table-bordered mt-3">
-        <thead>
+    {% if assignments %}
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table user-assignments-table">
+          <thead>
             <tr>
-                <th>Task Title</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+              <th class="col-title">Task Title</th>
+              <th class="col-start">Start Date</th>
+              <th class="col-end">End Date</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             {% for assignment in assignments %}
             <tr>
-                <td>{{ assignment.task_title }}</td>
-                <td>{{ assignment.start_date }}</td>
-                <td>{{ assignment.end_date }}</td>
+              <td class="col-title">
+                <div class="task-title-cell">{{ assignment.task_title }}</div>
+              </td>
+              <td class="col-start date-cell">{{ assignment.start_date|date:"M d, Y" }}</td>
+              <td class="col-end date-cell">{{ assignment.end_date|date:"M d, Y" }}</td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No assignments found.</p>
-{% endif %}
-
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-assignments">
+      <div class="empty-content">
+        <i class="bi bi-clipboard-x"></i>
+        <h4>No assignments found</h4>
+        <p>This user doesn't have any assignments yet.</p>
+        <a href="{% url 'add_assignment' user.id %}" class="btn-add-first">
+          <i class="bi bi-plus-circle"></i>
+          Add First Assignment
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

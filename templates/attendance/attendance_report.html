@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/attendance.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="container">
+    <h2>Attendance Report</h2>
+
+    <!-- Attendance Report Table -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table attendance-report-table">
+          <thead>
+            <tr>
+              <th class="col-date">Date</th>
+              <th class="col-name">Staff Name</th>
+              <th class="col-code">Staff Code</th>
+              <th class="col-time-in">Time In</th>
+              <th class="col-time-out">Time Out</th>
+              <th class="col-duration">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr class="attendance-row">
+              <td class="col-date date-cell">{{ record.date|date:"M d, Y" }}</td>
+              <td class="col-name">
+                <div class="staff-name-cell">{{ record.staff.full_name }}</div>
+              </td>
+              <td class="col-code">
+                <div class="staff-code-cell">{{ record.staff.staff_code }}</div>
+              </td>
+              <td class="col-time-in">
+                {% if record.time_in %}
+                  <div class="time-cell time-in">{{ record.time_in|time:"H:i" }}</div>
+                {% else %}
+                  <span class="no-data">—</span>
+                {% endif %}
+              </td>
+              <td class="col-time-out">
+                {% if record.time_out %}
+                  <div class="time-cell time-out">{{ record.time_out|time:"H:i" }}</div>
+                {% else %}
+                  <span class="no-data">—</span>
+                {% endif %}
+              </td>
+              <td class="col-duration">
+                {% if record.time_in and record.time_out %}
+                  <div class="duration-cell">
+                    <!-- You can add duration calculation here -->
+                    <span class="status-indicator completed">Full Day</span>
+                  </div>
+                {% elif record.time_in %}
+                  <span class="status-indicator in-progress">In Progress</span>
+                {% else %}
+                  <span class="status-indicator not-started">Absent</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-calendar-check"></i>
+                  <h4>No attendance records found</h4>
+                  <p>There are currently no attendance records to display.</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="page-actions">
+      <a href="{% url 'attendence_details' %}" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        Back to Attendance
+      </a>
+  </div>
+</div>
+{% endblock %}

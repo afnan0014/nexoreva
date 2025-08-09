@@ -1,51 +1,118 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/assignment_userlist.css' %}">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/assignment.css' %}">
+{% endblock %}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Work Assignment User List</h2>
-        <a href="{% url 'add_assignment' 0 %}" class="btn btn-success assign-button">Assign Work</a>
+{% block content %}
+<div class="main-content">
+  <div class="container assignment-list-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-clipboard-check"></i>
+        Work Assignment User List
+      </h2>
+      <a href="{% url 'add_assignment' 0 %}" class="btn-add-assignment">
+        <i class="bi bi-plus-circle"></i>
+        Assign Work
+      </a>
     </div>
 
-    <table class="table table-striped mt-3">
-        <thead class="thead-dark">
+    <!-- Assignments Table -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table assignment-table">
+          <thead>
             <tr>
-                <th>Staff Unicode</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Task Code</th> 
-                <th>Assigned Work</th>
-                <th>Status</th>
-                <th>Actions</th>
+              <th class="col-unicode">Staff Unicode</th>
+              <th class="col-username">Username</th>
+              <th class="col-role">Role</th>
+              <th class="col-task-code">Task Code</th>
+              <th class="col-assignment">Assigned Work</th>
+              <th class="col-status">Status</th>
+              <th class="col-actions">Actions</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             {% if user_data %}
-                {% for item in user_data %}
-                    <tr>
-                        <td>{{ item.unicode }}</td>
-                        <td>{{ item.username }}</td>
-                        <td>{{ item.role }}</td>
-                        <td>{{ item.task_code|default:"—" }}</td>
-                        <td>{{ item.assignment|default:"—" }}</td>
-                        <td>{{ item.status|default:"—" }}</td>
-                        <td>
-                            <a href="{% url 'edit_assignment' item.assignment_id %}" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="{% url 'delete_assignment' item.assignment_id %}" class="btn btn-sm btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                {% endfor %}
+              {% for item in user_data %}
+              <tr class="assignment-row">
+                <td class="col-unicode">
+                  <div class="unicode-cell">{{ item.unicode }}</div>
+                </td>
+                <td class="col-username">
+                  <div class="username-cell">{{ item.username }}</div>
+                </td>
+                <td class="col-role">
+                  {% if item.role == "Employee" %}
+                    <span class="role-badge employee">{{ item.role }}</span>
+                  {% else %}
+                    <span class="role-badge intern">{{ item.role }}</span>
+                  {% endif %}
+                </td>
+                <td class="col-task-code">
+                  {% if item.task_code %}
+                    <div class="task-code-cell">{{ item.task_code }}</div>
+                  {% else %}
+                    <span class="no-data">—</span>
+                  {% endif %}
+                </td>
+                <td class="col-assignment">
+                  {% if item.assignment %}
+                    <div class="assignment-cell">{{ item.assignment }}</div>
+                  {% else %}
+                    <span class="no-data">—</span>
+                  {% endif %}
+                </td>
+                <td class="col-status">
+                  {% if item.status %}
+                    {% if item.status == "Completed" %}
+                      <span class="status-indicator completed">{{ item.status }}</span>
+                    {% elif item.status == "In Progress" %}
+                      <span class="status-indicator in-progress">{{ item.status }}</span>
+                    {% elif item.status == "Pending" %}
+                      <span class="status-indicator pending">{{ item.status }}</span>
+                    {% else %}
+                      <span class="status-indicator not-started">{{ item.status }}</span>
+                    {% endif %}
+                  {% else %}
+                    <span class="no-data">—</span>
+                  {% endif %}
+                </td>
+                <td class="col-actions">
+                  <div class="action-buttons">
+                    <a href="{% url 'edit_assignment' item.assignment_id %}" class="action-btn edit-btn" title="Edit Assignment">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a href="{% url 'delete_assignment' item.assignment_id %}" class="action-btn delete-btn" title="Delete Assignment" 
+                       onclick="return confirm('Are you sure you want to delete this assignment?')">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
             {% else %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted">
-                        No work assignments found.
-                    </td>
-                </tr>
+            <tr>
+              <td colspan="7" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-clipboard-x"></i>
+                  <h4>No work assignments found</h4>
+                  <p>Start by assigning work to your team members.</p>
+                  <a href="{% url 'add_assignment' 0 %}" class="btn-add-first">
+                    <i class="bi bi-plus-circle"></i>
+                    Assign First Task
+                  </a>
+                </div>
+              </td>
+            </tr>
             {% endif %}
-        </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

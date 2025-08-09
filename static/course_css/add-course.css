@@ -44,6 +44,33 @@ form textarea:focus {
   border-color: #007bff;
   outline: none;
 }
+
+form input[readonly] {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Sub course input styling */
+.sub-course-input {
+  margin-bottom: 10px;
+}
+
+.sub-course-input input {
+  margin-bottom: 0;
+}
+
+.sub-course-input .btn-danger {
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
 button.btn-success {
   background-color: #28a745;
   color: white;

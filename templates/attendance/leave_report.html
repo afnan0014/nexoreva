@@ -1,57 +1,80 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/attendance_report.css' %}">
+<link rel="stylesheet" href="{% static 'css/attendance.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="main-content">
+  <div class="container">
+    <h2>Leave Requests</h2>
 
-  <h2>Leave Requests</h2>
-
-  <div class="form-container" style="padding: 1.5rem 2rem; max-width: 1000px;">
-    <div class="table-wrapper">
-      <table class="styled-table" role="table" aria-label="Leave Requests">
-        <thead>
-          <tr>
-            <th scope="col">Requested On</th>
-            <th scope="col">Staff Name</th>
-            <th scope="col">Staff Code</th>
-            <th scope="col">From Date</th>
-            <th scope="col">To Date</th>
-            <th scope="col">Reason</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for record in records %}
-          <tr>
-            <td>{{ record.request_date|date:"Y-m-d H:i" }}</td>
-            <td>{{ record.staff.full_name }}</td>
-            <td>{{ record.staff.staff_code }}</td>
-            <td>{{ record.from_date|date:"Y-m-d" }}</td>
-            <td>{{ record.to_date|date:"Y-m-d" }}</td>
-            <td>{{ record.reason }}</td>
-            <td>
-              <span class="status-indicator {{ record.status|lower }}">
-                {{ record.status }}
-              </span>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="7" style="text-align:center; padding: 1rem; color: var(--text-muted);">
-              No leave requests found.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <!-- Leave Requests Table -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table leave-requests-table">
+          <thead>
+            <tr>
+              <th class="col-requested">Requested On</th>
+              <th class="col-name">Staff Name</th>
+              <th class="col-code">Staff Code</th>
+              <th class="col-from">From Date</th>
+              <th class="col-to">To Date</th>
+              <th class="col-reason">Reason</th>
+              <th class="col-status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr class="leave-row">
+              <td class="col-requested date-cell">{{ record.request_date|date:"M d, Y H:i" }}</td>
+              <td class="col-name">
+                <div class="staff-name-cell">{{ record.staff.full_name }}</div>
+              </td>
+              <td class="col-code">
+                <div class="staff-code-cell">{{ record.staff.staff_code }}</div>
+              </td>
+              <td class="col-from date-cell">{{ record.from_date|date:"M d, Y" }}</td>
+              <td class="col-to date-cell">{{ record.to_date|date:"M d, Y" }}</td>
+              <td class="col-reason">
+                <div class="reason-cell">{{ record.reason }}</div>
+              </td>
+              <td class="col-status">
+                {% if record.status == "Approved" %}
+                  <span class="status-indicator approved">{{ record.status }}</span>
+                {% elif record.status == "Rejected" %}
+                  <span class="status-indicator rejected">{{ record.status }}</span>
+                {% elif record.status == "Pending" %}
+                  <span class="status-indicator pending">{{ record.status }}</span>
+                {% else %}
+                  <span class="status-indicator not-started">{{ record.status }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-calendar-x"></i>
+                  <h4>No leave requests found</h4>
+                  <p>There are currently no leave requests to display.</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <a href="{% url 'attendance_home' %}" class="leave-btn" style="display: inline-block; margin-top: 1.5rem;">
-      Back
-    </a>
+    <!-- Back Button -->
+    <div class="page-actions">
+      <a href="{% url 'attendance_home' %}" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        Back to Home
+      </a>
+    </div>
   </div>
 </div>
 {% endblock %}

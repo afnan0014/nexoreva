@@ -40,7 +40,7 @@ def add_assignment(request, user_id):
     })
 
 
-# ✅ FIXED: View assignments only for staff who actually have them
+#  FIXED: View assignments only for staff who actually have them
 @login_required
 def viewwork_assignment_userlist_staff(request):
     users = Staff.objects.annotate(
@@ -150,3 +150,4 @@ def delete_assignment(request, assignment_id):
     return render(request, 'workassignment/confirm_delete.html', {
         'assignment': assignment
     })
+

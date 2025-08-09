@@ -6,71 +6,384 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">✏️ Edit Staff Details</h2>
+<div class="main-content">
+  <div class="container">
+    <h2>Edit Staff Details</h2>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-info">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
+    <div class="form-container">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-person"></i>
+            Basic Information
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.full_name.errors %} has-error{% endif %}">
+              {{ form.full_name }}
+              <label for="{{ form.full_name.id_for_label }}">Full Name</label>
+              {% if form.full_name.errors %}
+                <div class="error-message">{{ form.full_name.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 🧍 Basic Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">🧍 Basic Information</legend>
-      {{ form.full_name.label_tag }} {{ form.full_name }}
-      {{ form.role.label_tag }} {{ form.role }}
-      {{ form.department.label_tag }} {{ form.department }}
-      {{ form.employment_type.label_tag }} {{ form.employment_type }}
-      {{ form.reporting_manager.label_tag }} {{ form.reporting_manager }}
-      {{ form.join_date.label_tag }} {{ form.join_date }}
-    </fieldset>
+            <div class="input-group{% if form.role.errors %} has-error{% endif %}">
+              {{ form.role }}
+              <label for="{{ form.role.id_for_label }}">Role</label>
+              {% if form.role.errors %}
+                <div class="error-message">{{ form.role.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📞 Contact Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📞 Contact Details</legend>
-      {{ form.email.label_tag }} {{ form.email }}
-      {{ form.phone.label_tag }} {{ form.phone }}
-      {{ form.emergency_contact.label_tag }} {{ form.emergency_contact }}
-    </fieldset>
+            <div class="input-group{% if form.department.errors %} has-error{% endif %}">
+              {{ form.department }}
+              <label for="{{ form.department.id_for_label }}">Department</label>
+              {% if form.department.errors %}
+                <div class="error-message">{{ form.department.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📍 Personal Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📍 Personal Details</legend>
-      {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
-      {{ form.gender.label_tag }} {{ form.gender }}
-      {{ form.address.label_tag }} {{ form.address }}
-    </fieldset>
+            <div class="input-group{% if form.employment_type.errors %} has-error{% endif %}">
+              {{ form.employment_type }}
+              <label for="{{ form.employment_type.id_for_label }}">Employment Type</label>
+              {% if form.employment_type.errors %}
+                <div class="error-message">{{ form.employment_type.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📁 Documents -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📁 Documents</legend>
-      {{ form.id_proof.label_tag }} {{ form.id_proof }}
-      {{ form.resume.label_tag }} {{ form.resume }}
-      {{ form.offer_letter.label_tag }} {{ form.offer_letter }}
-      {{ form.photo.label_tag }} {{ form.photo }}
-    </fieldset>
+            <div class="input-group{% if form.reporting_manager.errors %} has-error{% endif %}">
+              {{ form.reporting_manager }}
+              <label for="{{ form.reporting_manager.id_for_label }}">Reporting Manager</label>
+              {% if form.reporting_manager.errors %}
+                <div class="error-message">{{ form.reporting_manager.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 🆔 Unique Staff Code -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">🆔 Staff Code</legend>
-      {{ form.staff_code.label_tag }} {{ form.staff_code }}
-    </fieldset>
+            <div class="input-group{% if form.join_date.errors %} has-error{% endif %}">
+              {{ form.join_date }}
+              <label for="{{ form.join_date.id_for_label }}">Join Date</label>
+              {% if form.join_date.errors %}
+                <div class="error-message">{{ form.join_date.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
 
-    <!-- 📜 Status and Notes -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📜 Status & Notes</legend>
-      {{ form.status.label_tag }} {{ form.status }}
-      {{ form.admin_notes.label_tag }} {{ form.admin_notes }}
-    </fieldset>
+        <!-- Contact Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-telephone"></i>
+            Contact Details
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.email.errors %} has-error{% endif %}">
+              {{ form.email }}
+              <label for="{{ form.email.id_for_label }}">Email</label>
+              {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <button type="submit" class="btn btn-success">Update Staff</button>
-  </form>
+            <div class="input-group{% if form.phone.errors %} has-error{% endif %}">
+              {{ form.phone }}
+              <label for="{{ form.phone.id_for_label }}">Phone</label>
+              {% if form.phone.errors %}
+                <div class="error-message">{{ form.phone.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.emergency_contact.errors %} has-error{% endif %}">
+              {{ form.emergency_contact }}
+              <label for="{{ form.emergency_contact.id_for_label }}">Emergency Contact</label>
+              {% if form.emergency_contact.errors %}
+                <div class="error-message">{{ form.emergency_contact.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-geo-alt"></i>
+            Personal Details
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.date_of_birth.errors %} has-error{% endif %}">
+              {{ form.date_of_birth }}
+              <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
+              {% if form.date_of_birth.errors %}
+                <div class="error-message">{{ form.date_of_birth.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.gender.errors %} has-error{% endif %}">
+              {{ form.gender }}
+              <label for="{{ form.gender.id_for_label }}">Gender</label>
+              {% if form.gender.errors %}
+                <div class="error-message">{{ form.gender.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.address.errors %} has-error{% endif %} full-width">
+              {{ form.address }}
+              <label for="{{ form.address.id_for_label }}">Address</label>
+              {% if form.address.errors %}
+                <div class="error-message">{{ form.address.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Section with Icon-Only Display -->
+        <div class="form-section documents-section">
+          <h3 class="section-title">
+            <i class="bi bi-folder"></i>
+            Documents
+          </h3>
+          
+          <div class="documents-grid">
+            <!-- ID Proof -->
+            <div class="document-item">
+              <div class="document-header">
+                <label for="{{ form.id_proof.id_for_label }}" class="document-label">
+                  <i class="bi bi-person-badge"></i>
+                  ID Proof
+                </label>
+                {% if form.instance.id_proof %}
+                <div class="current-document-icons">
+                  <span class="current-label">Currently:</span>
+                  <div class="document-icon-display">
+                    <a href="{{ form.instance.id_proof.url }}" target="_blank" class="document-view-link" title="View ID Proof">
+                      {% if form.instance.id_proof.name|slice:"-4:" == ".pdf" %}
+                        <i class="bi bi-file-earmark-pdf file-icon pdf-icon"></i>
+                      {% elif form.instance.id_proof.name|slice:"-4:" == ".jpg" or form.instance.id_proof.name|slice:"-4:" == ".png" or form.instance.id_proof.name|slice:"-5:" == ".jpeg" %}
+                        <i class="bi bi-file-earmark-image file-icon image-icon"></i>
+                      {% else %}
+                        <i class="bi bi-file-earmark-text file-icon doc-icon"></i>
+                      {% endif %}
+                    </a>
+                    <span class="file-status">Uploaded</span>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-input-section">
+                <span class="change-label">Change:</span>
+                <div class="file-input-wrapper">
+                  {{ form.id_proof }}
+                  {% if form.id_proof.errors %}
+                    <div class="error-message">{{ form.id_proof.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Resume -->
+            <div class="document-item">
+              <div class="document-header">
+                <label for="{{ form.resume.id_for_label }}" class="document-label">
+                  <i class="bi bi-file-person"></i>
+                  Resume
+                </label>
+                {% if form.instance.resume %}
+                <div class="current-document-icons">
+                  <span class="current-label">Currently:</span>
+                  <div class="document-icon-display">
+                    <a href="{{ form.instance.resume.url }}" target="_blank" class="document-view-link" title="View Resume">
+                      {% if form.instance.resume.name|slice:"-4:" == ".pdf" %}
+                        <i class="bi bi-file-earmark-pdf file-icon pdf-icon"></i>
+                      {% elif form.instance.resume.name|slice:"-4:" == ".doc" or form.instance.resume.name|slice:"-5:" == ".docx" %}
+                        <i class="bi bi-file-earmark-word file-icon word-icon"></i>
+                      {% else %}
+                        <i class="bi bi-file-earmark-text file-icon doc-icon"></i>
+                      {% endif %}
+                    </a>
+                    <span class="file-status">Uploaded</span>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-input-section">
+                <span class="change-label">Change:</span>
+                <div class="file-input-wrapper">
+                  {{ form.resume }}
+                  {% if form.resume.errors %}
+                    <div class="error-message">{{ form.resume.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Offer Letter -->
+            <div class="document-item">
+              <div class="document-header">
+                <label for="{{ form.offer_letter.id_for_label }}" class="document-label">
+                  <i class="bi bi-envelope-paper"></i>
+                  Offer Letter
+                </label>
+                {% if form.instance.offer_letter %}
+                <div class="current-document-icons">
+                  <span class="current-label">Currently:</span>
+                  <div class="document-icon-display">
+                    <a href="{{ form.instance.offer_letter.url }}" target="_blank" class="document-view-link" title="View Offer Letter">
+                      {% if form.instance.offer_letter.name|slice:"-4:" == ".pdf" %}
+                        <i class="bi bi-file-earmark-pdf file-icon pdf-icon"></i>
+                      {% elif form.instance.offer_letter.name|slice:"-4:" == ".doc" or form.instance.offer_letter.name|slice:"-5:" == ".docx" %}
+                        <i class="bi bi-file-earmark-word file-icon word-icon"></i>
+                      {% else %}
+                        <i class="bi bi-file-earmark-text file-icon doc-icon"></i>
+                      {% endif %}
+                    </a>
+                    <span class="file-status">Uploaded</span>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-input-section">
+                <span class="change-label">Change:</span>
+                <div class="file-input-wrapper">
+                  {{ form.offer_letter }}
+                  {% if form.offer_letter.errors %}
+                    <div class="error-message">{{ form.offer_letter.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo -->
+            <div class="document-item">
+              <div class="document-header">
+                <label for="{{ form.photo.id_for_label }}" class="document-label">
+                  <i class="bi bi-camera"></i>
+                  Photo
+                </label>
+                {% if form.instance.photo %}
+                <div class="current-document-icons">
+                  <span class="current-label">Currently:</span>
+                  <div class="document-icon-display">
+                    <a href="{{ form.instance.photo.url }}" target="_blank" class="document-view-link" title="View Photo">
+                      <i class="bi bi-file-earmark-image file-icon image-icon"></i>
+                    </a>
+                    <span class="file-status">Uploaded</span>
+                  </div>
+                  <!-- Photo Preview Thumbnail -->
+                  <div class="photo-thumbnail">
+                    <img src="{{ form.instance.photo.url }}" alt="Staff Photo" class="thumbnail-image" onclick="openImageModal(this.src)">
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-input-section">
+                <span class="change-label">Change:</span>
+                <div class="file-input-wrapper">
+                  {{ form.photo }}
+                  {% if form.photo.errors %}
+                    <div class="error-message">{{ form.photo.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Staff Code -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-hash"></i>
+            Staff Code
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.staff_code.errors %} has-error{% endif %}">
+              {{ form.staff_code }}
+              <label for="{{ form.staff_code.id_for_label }}">Staff Code</label>
+              {% if form.staff_code.errors %}
+                <div class="error-message">{{ form.staff_code.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Status and Notes -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-clipboard"></i>
+            Status & Notes
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.status.errors %} has-error{% endif %}">
+              {{ form.status }}
+              <label for="{{ form.status.id_for_label }}">Status</label>
+              {% if form.status.errors %}
+                <div class="error-message">{{ form.status.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.admin_notes.errors %} has-error{% endif %} full-width">
+              {{ form.admin_notes }}
+              <label for="{{ form.admin_notes.id_for_label }}">Admin Notes</label>
+              {% if form.admin_notes.errors %}
+                <div class="error-message">{{ form.admin_notes.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <i class="bi bi-check-circle"></i>
+            Update Staff Details
+          </button>
+          <a href="{% url 'view_staff' %}" class="btn-cancel">
+            <i class="bi bi-arrow-left"></i>
+            Back to Staff List
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-<!-- ✅ Load dynamic JS logic -->
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" class="modal-image" src="" alt="Preview">
+  </div>
+</div>
+
+<script>
+function openImageModal(src) {
+  document.getElementById('imageModal').style.display = 'flex';
+  document.getElementById('modalImage').src = src;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  document.getElementById('imageModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeImageModal();
+  }
+});
+</script>
+
 <script src="{% static 'js/staff_code.js' %}"></script>
 {% endblock %}

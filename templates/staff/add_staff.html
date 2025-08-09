@@ -6,88 +6,262 @@
 {% endblock %}
 
 {% block content %}
+<div class="main-content">
+  <div class="container">
+    <h2>Add New Staff</h2>
 
-  <h2 class="mb-4">➕ Add New Staff</h2>
-
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-info">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-
-  {% if form.errors %}
-    <div class="alert alert-danger">
-      <strong>⚠️ Please fix the errors below:</strong>
-      <ul class="mb-0">
-        {% for field in form %}
-          {% if field.errors %}
-            <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-          {% endif %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <li><strong>Form error:</strong> {{ error }}</li>
-        {% endfor %}
-      </ul>
+    {% if form.errors %}
+    <div class="messages">
+      <div class="message error">
+        <i class="bi bi-exclamation-triangle"></i>
+        <div>
+          <strong>Please fix the errors below:</strong>
+          <ul class="error-list">
+            {% for field in form %}
+              {% if field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+              {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li><strong>Form error:</strong> {{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <button class="message-close" onclick="this.parentElement.remove()">×</button>
+      </div>
     </div>
-  {% endif %}
+    {% endif %}
 
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+    <div class="form-container">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <!-- 🧍 Basic Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">🧍 Basic Information</legend>
-      <div class="mb-2">{{ form.full_name.label_tag }} {{ form.full_name }} {{ form.full_name.errors }}</div>
-      <div class="mb-2">{{ form.role.label_tag }} {{ form.role }} {{ form.role.errors }}</div>
-      <div class="mb-2">{{ form.department.label_tag }} {{ form.department }} {{ form.department.errors }}</div>
-      <!-- <div class="mb-2">{{ form.designation.label_tag }} {{ form.designation }} {{ form.designation.errors }}</div> -->
-      <div class="mb-2">{{ form.employment_type.label_tag }} {{ form.employment_type }} {{ form.employment_type.errors }}</div>
-      <div class="mb-2">{{ form.reporting_manager.label_tag }} {{ form.reporting_manager }} {{ form.reporting_manager.errors }}</div>
-      <div class="mb-2">{{ form.join_date.label_tag }} {{ form.join_date }} {{ form.join_date.errors }}</div>
-    </fieldset>
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-person"></i>
+            Basic Information
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.full_name.errors %} has-error{% endif %}">
+              {{ form.full_name }}
+              <label for="{{ form.full_name.id_for_label }}">Full Name</label>
+              {% if form.full_name.errors %}
+                <div class="error-message">{{ form.full_name.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📞 Contact Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📞 Contact Details</legend>
-      <div class="mb-2">{{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}</div>
-      <div class="mb-2">{{ form.phone.label_tag }} {{ form.phone }} {{ form.phone.errors }}</div>
-      <div class="mb-2">{{ form.emergency_contact.label_tag }} {{ form.emergency_contact }} {{ form.emergency_contact.errors }}</div>
-    </fieldset>
+            <div class="input-group{% if form.role.errors %} has-error{% endif %}">
+              {{ form.role }}
+              <label for="{{ form.role.id_for_label }}">Role</label>
+              {% if form.role.errors %}
+                <div class="error-message">{{ form.role.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📍 Personal Info -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📍 Personal Details</legend>
-      <div class="mb-2">{{ form.date_of_birth.label_tag }} {{ form.date_of_birth }} {{ form.date_of_birth.errors }}</div>
-      <div class="mb-2">{{ form.gender.label_tag }} {{ form.gender }} {{ form.gender.errors }}</div>
-      <div class="mb-2">{{ form.address.label_tag }} {{ form.address }} {{ form.address.errors }}</div>
-    </fieldset>
+            <div class="input-group{% if form.department.errors %} has-error{% endif %}">
+              {{ form.department }}
+              <label for="{{ form.department.id_for_label }}">Department</label>
+              {% if form.department.errors %}
+                <div class="error-message">{{ form.department.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📁 Documents -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📁 Documents</legend>
-      <div class="mb-2">{{ form.id_proof.label_tag }} {{ form.id_proof }} {{ form.id_proof.errors }}</div>
-      <div class="mb-2">{{ form.resume.label_tag }} {{ form.resume }} {{ form.resume.errors }}</div>
-      <div class="mb-2">{{ form.offer_letter.label_tag }} {{ form.offer_letter }} {{ form.offer_letter.errors }}</div>
-      <div class="mb-2">{{ form.photo.label_tag }} {{ form.photo }} {{ form.photo.errors }}</div>
-    </fieldset>
+            <div class="input-group{% if form.employment_type.errors %} has-error{% endif %}">
+              {{ form.employment_type }}
+              <label for="{{ form.employment_type.id_for_label }}">Employment Type</label>
+              {% if form.employment_type.errors %}
+                <div class="error-message">{{ form.employment_type.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 🆔 Unique Staff Code -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">🆔 Staff Code</legend>
-      <div class="mb-2">{{ form.staff_code.label_tag }} {{ form.staff_code }} {{ form.staff_code.errors }}</div>
-    </fieldset>
+            <div class="input-group{% if form.reporting_manager.errors %} has-error{% endif %}">
+              {{ form.reporting_manager }}
+              <label for="{{ form.reporting_manager.id_for_label }}">Reporting Manager</label>
+              {% if form.reporting_manager.errors %}
+                <div class="error-message">{{ form.reporting_manager.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-    <!-- 📜 Status and Notes -->
-    <fieldset class="border p-3 mb-4">
-      <legend class="w-auto">📜 Status & Notes</legend>
-      <div class="mb-2">{{ form.status.label_tag }} {{ form.status }} {{ form.status.errors }}</div>
-      <div class="mb-2">{{ form.admin_notes.label_tag }} {{ form.admin_notes }} {{ form.admin_notes.errors }}</div>
-    </fieldset>
+            <div class="input-group{% if form.join_date.errors %} has-error{% endif %}">
+              {{ form.join_date }}
+              <label for="{{ form.join_date.id_for_label }}">Join Date</label>
+              {% if form.join_date.errors %}
+                <div class="error-message">{{ form.join_date.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-<!-- </div> -->
+        <!-- Contact Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-telephone"></i>
+            Contact Details
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.email.errors %} has-error{% endif %}">
+              {{ form.email }}
+              <label for="{{ form.email.id_for_label }}">Email</label>
+              {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors|striptags }}</div>
+              {% endif %}
+            </div>
 
-<!-- ✅ Load dynamic JS logic -->
+            <div class="input-group{% if form.phone.errors %} has-error{% endif %}">
+              {{ form.phone }}
+              <label for="{{ form.phone.id_for_label }}">Phone</label>
+              {% if form.phone.errors %}
+                <div class="error-message">{{ form.phone.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.emergency_contact.errors %} has-error{% endif %}">
+              {{ form.emergency_contact }}
+              <label for="{{ form.emergency_contact.id_for_label }}">Emergency Contact</label>
+              {% if form.emergency_contact.errors %}
+                <div class="error-message">{{ form.emergency_contact.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-geo-alt"></i>
+            Personal Details
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.date_of_birth.errors %} has-error{% endif %}">
+              {{ form.date_of_birth }}
+              <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
+              {% if form.date_of_birth.errors %}
+                <div class="error-message">{{ form.date_of_birth.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.gender.errors %} has-error{% endif %}">
+              {{ form.gender }}
+              <label for="{{ form.gender.id_for_label }}">Gender</label>
+              {% if form.gender.errors %}
+                <div class="error-message">{{ form.gender.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.address.errors %} has-error{% endif %} full-width">
+              {{ form.address }}
+              <label for="{{ form.address.id_for_label }}">Address</label>
+              {% if form.address.errors %}
+                <div class="error-message">{{ form.address.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-folder"></i>
+            Documents
+          </h3>
+          
+          <div class="form-grid">
+            <div class="file-input-group{% if form.id_proof.errors %} has-error{% endif %}">
+              {{ form.id_proof }}
+              <label for="{{ form.id_proof.id_for_label }}">ID Proof</label>
+              {% if form.id_proof.errors %}
+                <div class="error-message">{{ form.id_proof.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="file-input-group{% if form.resume.errors %} has-error{% endif %}">
+              {{ form.resume }}
+              <label for="{{ form.resume.id_for_label }}">Resume</label>
+              {% if form.resume.errors %}
+                <div class="error-message">{{ form.resume.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="file-input-group{% if form.offer_letter.errors %} has-error{% endif %}">
+              {{ form.offer_letter }}
+              <label for="{{ form.offer_letter.id_for_label }}">Offer Letter</label>
+              {% if form.offer_letter.errors %}
+                <div class="error-message">{{ form.offer_letter.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="file-input-group{% if form.photo.errors %} has-error{% endif %}">
+              {{ form.photo }}
+              <label for="{{ form.photo.id_for_label }}">Photo</label>
+              {% if form.photo.errors %}
+                <div class="error-message">{{ form.photo.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Code -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-hash"></i>
+            Staff Code
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.staff_code.errors %} has-error{% endif %}">
+              {{ form.staff_code }}
+              <label for="{{ form.staff_code.id_for_label }}">Staff Code</label>
+              {% if form.staff_code.errors %}
+                <div class="error-message">{{ form.staff_code.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Status and Notes -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-clipboard"></i>
+            Status & Notes
+          </h3>
+          
+          <div class="form-grid">
+            <div class="input-group{% if form.status.errors %} has-error{% endif %}">
+              {{ form.status }}
+              <label for="{{ form.status.id_for_label }}">Status</label>
+              {% if form.status.errors %}
+                <div class="error-message">{{ form.status.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <div class="input-group{% if form.admin_notes.errors %} has-error{% endif %} full-width">
+              {{ form.admin_notes }}
+              <label for="{{ form.admin_notes.id_for_label }}">Admin Notes</label>
+              {% if form.admin_notes.errors %}
+                <div class="error-message">{{ form.admin_notes.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <i class="bi bi-check-circle"></i>
+            Add Staff Member
+          </button>
+          <a href="{% url 'view_staff' %}" class="btn-cancel">
+            <i class="bi bi-arrow-left"></i>
+            Back to Staff List
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script src="{% static 'js/staff_code.js' %}?v=1.0.3"></script>
 {% endblock %}

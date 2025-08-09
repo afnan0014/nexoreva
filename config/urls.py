@@ -22,11 +22,11 @@ urlpatterns = [
     path('', include('attendance.urls')),      # << Make attendance home the default page
     path('dashboard/', include('dashboard.urls')),  # << dashboard now at /dashboard/
     path('staff/', include('staff.urls')),
-    path('',include('attendance.urls')),
 
     # path('staff/', include('staff.urls')),
     path('workassignment/', include('workassignment.urls')),  # ✅ keep this line
-    path('',include('task_trakking.urls'))
+    path('task/', include('task_trakking.urls')),  # ✅ Fixed: Give task_trakking its own path
+    path('track/',include('payments.urls')),  # ✅ Added payments tracking
 ]
 
 if settings.DEBUG:

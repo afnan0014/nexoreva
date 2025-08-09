@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/payments.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="container payment-details-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-person-circle"></i>
+        {{ staff.full_name }} - {{ course.name }}
+      </h2>
+      <a href="{% url 'payment_tracking' %}" class="btn-back-header">
+        <i class="bi bi-arrow-left"></i>
+        Back to Tracking
+      </a>
+    </div>
+
+    <!-- Finance Info Cards -->
+    <div class="finance-section">
+      <h3 class="section-title">
+        <i class="bi bi-graph-up"></i>
+        Financial Overview
+      </h3>
+      <div class="finance-cards">
+        <div class="finance-card course-fee">
+          <div class="card-icon">
+            <i class="bi bi-cash-stack"></i>
+          </div>
+          <div class="card-content">
+            <h5 class="card-title">Course Fee</h5>
+            <p class="card-amount">₹{{ course.fees|floatformat:2 }}</p>
+          </div>
+        </div>
+
+        <div class="finance-card total-paid">
+          <div class="card-icon">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <div class="card-content">
+            <h5 class="card-title">Total Paid</h5>
+            <p class="card-amount">₹{{ total_paid|floatformat:2 }}</p>
+          </div>
+        </div>
+
+        <div class="finance-card due-amount">
+          <div class="card-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <div class="card-content">
+            <h5 class="card-title">Due Amount</h5>
+            <p class="card-amount">₹{{ due_amount|floatformat:2 }}</p>
+          </div>
+        </div>
+
+        <div class="finance-card payment-status">
+          <div class="card-icon">
+            {% if due_amount <= 0 %}
+              <i class="bi bi-check-circle-fill"></i>
+            {% else %}
+              <i class="bi bi-clock-fill"></i>
+            {% endif %}
+          </div>
+          <div class="card-content">
+            <h5 class="card-title">Status</h5>
+            {% if due_amount <= 0 %}
+              <span class="status-indicator completed">Completed</span>
+            {% else %}
+              <span class="status-indicator pending">Pending</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment History Section -->
+    <div class="payment-history-section">
+      <h3 class="section-title">
+        <i class="bi bi-clock-history"></i>
+        Payment History
+      </h3>
+      <div class="table-wrapper">
+        <table class="styled-table payment-history-table">
+          <thead>
+            <tr>
+              <th class="col-serial">#</th>
+              <th class="col-date">Payment Date</th>
+              <th class="col-amount">Amount</th>
+              <th class="col-method">Payment Method</th>
+              <th class="col-reference">Reference ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in payments %}
+            <tr class="payment-history-row">
+              <td class="col-serial">{{ forloop.counter }}</td>
+              <td class="col-date date-cell">{{ payment.date|date:"M d, Y" }}</td>
+              <td class="col-amount">
+                <div class="payment-amount">₹{{ payment.amount|floatformat:2 }}</div>
+              </td>
+              <td class="col-method">
+                <span class="method-badge">{{ payment.method|default:"Cash" }}</span>
+              </td>
+              <td class="col-reference">
+                <div class="reference-id">{{ payment.reference_id|default:"—" }}</div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-credit-card-2-front"></i>
+                  <h4>No payments recorded</h4>
+                  <p>No payment history found for this enrollment.</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Payment Section -->
+    <div class="add-payment-section">
+      <h3 class="section-title">
+        <i class="bi bi-plus-circle"></i>
+        Add New Payment
+      </h3>
+      <div class="payment-form-container">
+        <form method="POST" class="payment-form">
+          {% csrf_token %}
+          
+          <div class="form-grid">
+            {% for field in form %}
+            <div class="input-group{% if field.errors %} has-error{% endif %}">
+              {{ field }}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {% if field.errors %}
+                <div class="error-message">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">
+              <i class="bi bi-plus-circle"></i>
+              Add Payment
+            </button>
+            <button type="reset" class="btn-reset-form">
+              <i class="bi bi-arrow-clockwise"></i>
+              Reset Form
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Payment Progress Bar -->
+    {% if course.fees > 0 %}
+    <div class="progress-section">
+      <h3 class="section-title">
+        <i class="bi bi-bar-chart"></i>
+        Payment Progress
+      </h3>
+      <div class="progress-card">
+        <div class="progress-info">
+          <span class="progress-label">Payment Completion</span>
+          <span class="progress-percentage">{{ payment_percentage|floatformat:1 }}%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: {{ payment_percentage }}%"></div>
+        </div>
+        <div class="progress-details">
+          <span>₹{{ total_paid|floatformat:2 }} of ₹{{ course.fees|floatformat:2 }}</span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/add_task.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="task-container">
+    <h1 class="task-title">Daily Task</h1>
+
+    <form method="post" class="task-form">
+        {% csrf_token %}
+        <input type="text" name="staff_code" placeholder="Enter Staff Code" class="input-field"><br>    
+        <textarea name="task" class="textarea-field" rows="5" placeholder="Enter task"></textarea><br>
+        <button type="submit" class="submit-btn">Submit Task</button>
+    </form>
+
+    {% if error_message %}
+    <p class="error-message">{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock %}

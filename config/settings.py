@@ -26,12 +26,14 @@ INSTALLED_APPS = [
     'dashboard',
     'course',
     'attendance',
+    'payments', 
 
     # Third-party
     'crispy_forms',
     'certificate',
     'workassignment',
-    'task_trakking'
+    'task_trakking',
+    'crispy_bootstrap4',
     
 
 
@@ -43,7 +45,8 @@ INSTALLED_APPS = [
 
 
 # Crispy Forms Settings
-CRISPY_TEMPLATE_PACK = 'bootstrap4'  # or 'bootstrap5' if you're using Bootstrap 5
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+ # or 'bootstrap5' if you're using Bootstrap 5
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,3 +123,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login redirect settings
 LOGIN_URL = '/login/'
 
+# Example using Gmail SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'shmlpk2006@gmail.com'
+EMAIL_HOST_PASSWORD = 'otgw pxqt imgi nvqb'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

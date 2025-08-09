@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from attendance.models import Attendance
 
+
 # Custom Login View
 def user_login(request):
     if request.method == 'POST':
@@ -19,6 +20,13 @@ def user_login(request):
     return render(request, 'dashboard/login.html')
 
 
+# Custom Logout View
+@login_required
+def user_logout(request):
+    logout(request)
+    messages.success(request, "You have been successfully logged out.")
+    return redirect('login')
+
 
 @login_required
 def dashboard_view(request):
@@ -28,6 +36,6 @@ def dashboard_view(request):
         'total_staff': 12,
         'total_departments': 4,
         'total_interns': 5,
-        'attendance': attendance  # ✅ renamed from 'attendence' to 'attendance' for correct spelling
+        'attendance': attendance
     }
     return render(request, 'dashboard/dashboard.html', context)

@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.utils.timezone import localtime  # ✅ Added for local time conversion
+from django.utils.timezone import localtime
 from django.contrib import messages
 from .models import Attendance, LeaveRequest
 from staff.models import Staff
 from .forms import StaffCodeForm, LeaveRequestForm
 from django.contrib.auth.decorators import login_required
-from .models import Attendance
-from datetime import date
-from django.db.models import Q
+from datetime import date, timedelta, datetime
+from django.db.models import Q, Count
+from .models import Daily_Task
 
 
 def attendance_home(request):
@@ -18,17 +18,17 @@ def attendance_home(request):
 def attendance_action(request):
     if request.method == 'POST':
         staff_code = request.POST.get('staff_code')
-        action = request.POST.get('action')  # 'time_in' or 'time_out'
+        action = request.POST.get('action')
         staff = Staff.objects.filter(staff_code=staff_code).first()
 
         if not staff:
             messages.error(request, "Invalid staff code.")
             return redirect('attendance_home')
 
-        today = timezone.localdate()  # ✅ Uses local date
+        today = timezone.localdate()
         att, _ = Attendance.objects.get_or_create(staff=staff, date=today)
 
-        now = localtime(timezone.now()).time()  # ✅ Local time in IST
+        now = localtime(timezone.now()).time()
 
         if action == 'time_in':
             if att.time_in:
@@ -78,21 +78,15 @@ def leave_request(request):
 
     return render(request, 'attendance/leave_request.html', {'form': form})
 
-from datetime import date, timedelta, datetime
-from django.db.models import Q
-from django.shortcuts import render
-# from .models import Staff, Attendance, LeaveRequest
 
 def attendance_details(request):
     today = date.today()
     search_query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', '')
 
-    # Get from_date and to_date from GET, fallback to today
     from_date_str = request.GET.get('from_date')
     to_date_str = request.GET.get('to_date')
 
-    # Parse dates, safe fallback if empty or invalid
     def parse_date(val, fallback):
         try:
             return datetime.strptime(val, "%Y-%m-%d").date()
@@ -102,7 +96,6 @@ def attendance_details(request):
     from_date = parse_date(from_date_str, today)
     to_date = parse_date(to_date_str, today)
 
-    # Ensure from_date is not after to_date
     if from_date > to_date:
         from_date, to_date = to_date, from_date
 
@@ -110,10 +103,14 @@ def attendance_details(request):
     if search_query:
         all_staff = all_staff.filter(Q(full_name__icontains=search_query))
 
-    # For each staff, get attendance data for each date in range
     attendance_details = []
     delta_days = (to_date - from_date).days + 1
-
+    
+    # Initialize counters for summary
+    present_count = 0
+    leave_count = 0
+    absent_count = 0
+     
     for staff in all_staff:
         for offset in range(delta_days):
             current_date = from_date + timedelta(days=offset)
@@ -127,12 +124,15 @@ def attendance_details(request):
                 status = "Present"
                 time_in = attendance.time_in
                 time_out = attendance.time_out
+                present_count += 1
             elif on_leave:
                 status = "On Leave"
                 time_in = time_out = None
+                leave_count += 1
             else:
                 status = "Absent"
                 time_in = time_out = None
+                absent_count += 1
 
             status_class = status.lower().replace(' ', '-')
 
@@ -148,7 +148,6 @@ def attendance_details(request):
                 'status_class': status_class,
             })
 
-    # Sort by date DESC, then staff name
     attendance_details.sort(key=lambda d: (d['date'], d['staff'].full_name))
 
     return render(request, 'attendance/attendence_list.html', {
@@ -157,8 +156,11 @@ def attendance_details(request):
         'status_filter': status_filter,
         'from_date': from_date.strftime("%Y-%m-%d"),
         'to_date': to_date.strftime("%Y-%m-%d"),
+        'present_count': present_count,
+        'leave_count': leave_count,
+        'absent_count': absent_count,
     })
-    
+
 
 def leave_details(request, staff_id):
     staff = get_object_or_404(Staff, id=staff_id)
@@ -167,7 +169,6 @@ def leave_details(request, staff_id):
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
 
-    # Always use records, since your template is iterating over 'records'
     records = LeaveRequest.objects.filter(staff=staff).order_by('-request_date')
 
     if query:
@@ -179,9 +180,139 @@ def leave_details(request, staff_id):
 
     context = {
         'staff': staff,
-        'records': records,           # CHANGED: 'records' as your template expects
+        'records': records,
         'query': query,
         'from_date': from_date,
         'to_date': to_date,
     }
     return render(request, 'attendance/leave_details.html', context)
+
+
+def attendance_report(request):
+    """View for displaying comprehensive attendance report"""
+    # Get filter parameters
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
+    staff_filter = request.GET.get('staff', '').strip()
+    
+    # Set default date range (last 30 days)
+    today = date.today()
+    default_from_date = today - timedelta(days=30)
+    
+    def parse_date(val, fallback):
+        try:
+            return datetime.strptime(val, "%Y-%m-%d").date()
+        except (TypeError, ValueError):
+            return fallback
+    
+    from_date = parse_date(from_date_str, default_from_date)
+    to_date = parse_date(to_date_str, today)
+    
+    if from_date > to_date:
+        from_date, to_date = to_date, from_date
+    
+    # Get attendance records
+    records = Attendance.objects.filter(
+        date__range=[from_date, to_date]
+    ).select_related('staff').order_by('-date', 'staff__full_name')
+    
+    # Apply staff filter if provided
+    if staff_filter:
+        records = records.filter(
+            Q(staff__full_name__icontains=staff_filter) |
+            Q(staff__staff_code__icontains=staff_filter)
+        )
+    
+    context = {
+        'records': records,
+        'from_date': from_date.strftime("%Y-%m-%d"),
+        'to_date': to_date.strftime("%Y-%m-%d"),
+        'staff_filter': staff_filter,
+    }
+    
+    return render(request, 'attendance/attendance_report.html', context)
+
+
+def leave_report(request):
+    """View for displaying comprehensive leave report"""
+    # Get filter parameters
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
+    staff_filter = request.GET.get('staff', '').strip()
+    status_filter = request.GET.get('status', '')
+    
+    # Set default date range (last 90 days)
+    today = date.today()
+    default_from_date = today - timedelta(days=90)
+    
+    def parse_date(val, fallback):
+        try:
+            return datetime.strptime(val, "%Y-%m-%d").date()
+        except (TypeError, ValueError):
+            return fallback
+    
+    from_date = parse_date(from_date_str, default_from_date)
+    to_date = parse_date(to_date_str, today)
+    
+    if from_date > to_date:
+        from_date, to_date = to_date, from_date
+    
+    # Get leave records
+    records = LeaveRequest.objects.filter(
+        Q(from_date__range=[from_date, to_date]) |
+        Q(to_date__range=[from_date, to_date]) |
+        Q(from_date__lte=from_date, to_date__gte=to_date)
+    ).select_related('staff').order_by('-request_date')
+    
+    # Apply filters
+    if staff_filter:
+        records = records.filter(
+            Q(staff__full_name__icontains=staff_filter) |
+            Q(staff__staff_code__icontains=staff_filter)
+        )
+    
+    if status_filter:
+        records = records.filter(status=status_filter)
+    
+    context = {
+        'records': records,
+        'from_date': from_date.strftime("%Y-%m-%d"),
+        'to_date': to_date.strftime("%Y-%m-%d"),
+        'staff_filter': staff_filter,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'attendance/leave_report.html', context)
+
+
+def add_task(request):
+    error_message = None
+    success_message = None
+    
+    if request.method == 'POST':
+        staff_code = request.POST.get('staff_code', '').strip()
+        task = request.POST.get('task', '').strip()
+        
+        if not staff_code or not task:
+            error_message = "Please provide both staff code and task description."
+        else:
+            try:
+                staff_obj = Staff.objects.get(staff_code=staff_code)
+                daily_task_obj = Daily_Task.objects.create(
+                    staff_code=staff_code, 
+                    task=task
+                )
+                success_message = f"Task assigned successfully to {staff_obj.full_name}."
+                messages.success(request, success_message)
+                return redirect('add_task')  # Redirect to clear form
+            except Staff.DoesNotExist:
+                error_message = "Staff with this code doesn't exist."
+            except Exception as e:
+                error_message = f"An error occurred: {str(e)}"
+    
+    context = {
+        'error_message': error_message,
+        'success_message': success_message,
+    }
+    
+    return render(request, 'attendance/add_task.html', context)

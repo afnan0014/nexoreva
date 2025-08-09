@@ -1,70 +1,188 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/attendance.css' %}">
 {% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Attendance List</title>
-    <link rel="stylesheet" href="{% static 'css/attendance_list.css' %}">
-</head>
-<body>
-<div class="main-card">
+<div class="main-content">
+  <div class="container attendance-list-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-calendar-check"></i>
+        Attendance List
+      </h2>
+      <a href="{% url 'attendance_report' %}" class="btn-view-report">
+        <i class="bi bi-file-text"></i>
+        View Report
+      </a>
+    </div>
 
-<form method="get" class="attendance-filter-form">
-    <input type="text" name="q" placeholder="Search staff by name" value="{{ search_query|default_if_none:'' }}">
-    <input type="date" name="from_date" value="{{ from_date|default_if_none:'' }}">
-    <input type="date" name="to_date" value="{{ to_date|default_if_none:'' }}">
-    <select name="status">
-        <option value="">-- All Status --</option>
-        <option value="Present" {% if status_filter == "Present" %}selected{% endif %}>Present</option>
-        <option value="On Leave" {% if status_filter == "On Leave" %}selected{% endif %}>On Leave</option>
-        <option value="Absent" {% if status_filter == "Absent" %}selected{% endif %}>Absent</option>
-    </select>
-    <button type="submit">Search</button>
-</form>
+    <!-- Search and Filter Section -->
+    <div class="filter-section">
+      <h3 class="section-title">
+        <i class="bi bi-funnel"></i>
+        Search & Filter
+      </h3>
+      <form method="get" class="filter-form">
+        <div class="filter-grid">
+          <!-- Search Input -->
+          <div class="input-group">
+            <input type="text" name="q" placeholder=" " value="{{ search_query|default_if_none:'' }}">
+            <label>Search staff by name</label>
+          </div>
 
+          <!-- From Date -->
+          <div class="input-group">
+            <input type="date" name="from_date" value="{{ from_date|default_if_none:'' }}">
+            <label>From Date</label>
+          </div>
 
-    <table class="attendance-table">
-        <thead>
+          <!-- To Date -->
+          <div class="input-group">
+            <input type="date" name="to_date" value="{{ to_date|default_if_none:'' }}">
+            <label>To Date</label>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="input-group">
+            <select name="status">
+              <option value="">All Status</option>
+              <option value="Present" {% if status_filter == "Present" %}selected{% endif %}>Present</option>
+              <option value="On Leave" {% if status_filter == "On Leave" %}selected{% endif %}>On Leave</option>
+              <option value="Absent" {% if status_filter == "Absent" %}selected{% endif %}>Absent</option>
+            </select>
+            <label>Filter by Status</label>
+          </div>
+
+          <!-- Search Button -->
+          <div class="filter-actions">
+            <button type="submit" class="btn-search">
+              <i class="bi bi-search"></i>
+              Search
+            </button>
+            <a href="{% url 'attendence_details' %}" class="btn-reset">
+              <i class="bi bi-arrow-clockwise"></i>
+              Reset
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="styled-table attendance-list-table">
+          <thead>
             <tr>
-                <th>Staff Name</th>
-                <th>Date</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Status</th>
+              <th class="col-name">Staff Name</th>
+              <th class="col-date">Date</th>
+              <th class="col-time-in">Time In</th>
+              <th class="col-time-out">Time Out</th>
+              <th class="col-status">Status</th>
+              <th class="col-actions">Actions</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             {% for data in attendance_details %}
-            <tr>
-                <td>{{ data.staff.full_name }}</td>
-                <td>{{ data.date }}</td>
-                <td>{{ data.time_in|default:"--" }}</td>
-                <td>{{ data.time_out|default:"--" }}</td>
-                <td>
-                    {% if data.status == "On Leave" %}
-                        <form method="get" action="{% url 'leave_details' data.staff.id %}" style="display:inline;">
-                            <button type="submit" class="on-leave-btn">
-                                On Leave
-                            </button>
-                        </form>
-                    {% else %}
-                        {{ data.status }}
-                    {% endif %}
-                </td>
+            <tr class="attendance-row">
+              <td class="col-name">
+                <div class="staff-name-cell">{{ data.staff.full_name }}</div>
+              </td>
+              <td class="col-date date-cell">{{ data.date|date:"M d, Y" }}</td>
+              <td class="col-time-in">
+                {% if data.time_in %}
+                  <div class="time-cell time-in">{{ data.time_in|time:"H:i" }}</div>
+                {% else %}
+                  <span class="no-data">--</span>
+                {% endif %}
+              </td>
+              <td class="col-time-out">
+                {% if data.time_out %}
+                  <div class="time-cell time-out">{{ data.time_out|time:"H:i" }}</div>
+                {% else %}
+                  <span class="no-data">--</span>
+                {% endif %}
+              </td>
+              <td class="col-status">
+                {% if data.status == "Present" %}
+                  <span class="status-indicator present">{{ data.status }}</span>
+                {% elif data.status == "On Leave" %}
+                  <span class="status-indicator on-leave">{{ data.status }}</span>
+                {% elif data.status == "Absent" %}
+                  <span class="status-indicator absent">{{ data.status }}</span>
+                {% else %}
+                  <span class="status-indicator not-started">{{ data.status }}</span>
+                {% endif %}
+              </td>
+              <td class="col-actions">
+                {% if data.status == "On Leave" %}
+                  <a href="{% url 'leave_details' data.staff.id %}" class="action-btn leave-details-btn" title="View Leave Details">
+                    <i class="bi bi-calendar-x"></i>
+                    Details
+                  </a>
+                {% else %}
+                  <span class="no-action">--</span>
+                {% endif %}
+              </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No attendance data available.</td>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <i class="bi bi-calendar-check"></i>
+                  <h4>No attendance data available</h4>
+                  <p>No attendance records found for the selected criteria.</p>
+                </div>
+              </td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    {% if attendance_details %}
+    <div class="summary-section">
+      <h3 class="section-title">
+        <i class="bi bi-graph-up"></i>
+        Attendance Summary
+      </h3>
+      <div class="summary-grid">
+        <div class="summary-card present">
+          <div class="summary-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="summary-info">
+            <div class="summary-count">{{ present_count|default:0 }}</div>
+            <div class="summary-label">Present</div>
+          </div>
+        </div>
+        <div class="summary-card on-leave">
+          <div class="summary-icon">
+            <i class="bi bi-calendar-x"></i>
+          </div>
+          <div class="summary-info">
+            <div class="summary-count">{{ leave_count|default:0 }}</div>
+            <div class="summary-label">On Leave</div>
+          </div>
+        </div>
+        <div class="summary-card absent">
+          <div class="summary-icon">
+            <i class="bi bi-x-circle"></i>
+          </div>
+          <div class="summary-info">
+            <div class="summary-count">{{ absent_count|default:0 }}</div>
+            <div class="summary-label">Absent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
-</body>
-</html>
 {% endblock %}
