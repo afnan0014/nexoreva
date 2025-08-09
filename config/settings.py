@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'certificate',
     'workassignment',
     'task_trakking',
-    'crispy_bootstrap4',
+    # 'crispy_bootstrap4',
+    'crispy_bootstrap5',
     
 
 
