@@ -9,10 +9,23 @@
 {% block content %}
 <div class="main-content">
   <div class="container">
-    <h2>Add New Course</h2>
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2>
+        <i class="bi bi-plus-circle"></i>
+        Add New Course
+      </h2>
+    </div>
+
+    <!-- Information Alert -->
+    <div class="alert alert-info" role="alert">
+      <strong>Important:</strong> All courses must have a course category and sub-course selected. 
+      If you don't see sub-courses in the dropdown, please go to 
+      <a href="{% url 'create_course' %}" class="alert-link">Create Course</a> first to set up the course structure.
+    </div>
 
     <div class="form-container">
-      <form method="POST">
+      <form method="POST" id="courseForm">
         {% csrf_token %}
         
         <!-- Course Information Section -->
@@ -25,7 +38,7 @@
           <div class="form-grid">
             <div class="input-group{% if form.name.errors %} has-error{% endif %}">
               {{ form.name }}
-              <label for="{{ form.name.id_for_label }}">Course Name</label>
+              <label for="{{ form.name.id_for_label }}">Course Name <span class="text-danger">*</span></label>
               {% if form.name.errors %}
                 <div class="error-message">{{ form.name.errors|striptags }}</div>
               {% endif %}
@@ -33,15 +46,16 @@
 
             <div class="input-group{% if form.sub_column.errors %} has-error{% endif %}">
               {{ form.sub_column }}
-              <label for="{{ form.sub_column.id_for_label }}">Sub Column</label>
+              <label for="{{ form.sub_column.id_for_label }}">Sub Column <span class="text-danger">*</span></label>
               {% if form.sub_column.errors %}
                 <div class="error-message">{{ form.sub_column.errors|striptags }}</div>
               {% endif %}
+              <small class="form-text text-muted">Select a course category first to see available sub-courses.</small>
             </div>
 
             <div class="input-group{% if form.unicode.errors %} has-error{% endif %}">
               {{ form.unicode }}
-              <label for="{{ form.unicode.id_for_label }}">Unicode</label>
+              <label for="{{ form.unicode.id_for_label }}">Course Code</label>
               {% if form.unicode.errors %}
                 <div class="error-message">{{ form.unicode.errors|striptags }}</div>
               {% endif %}
@@ -82,7 +96,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-submit">
+          <button type="submit" class="btn-submit" id="submitBtn">
             <i class="bi bi-check-circle"></i>
             Create Course
           </button>
@@ -99,16 +113,6 @@
 
 {% block extra_js %}
 <script>
-// Define the sub column options for each course
-const subColumnOptions = {
-  'IT': ['Web Development', 'Data Science', 'Networking', 'Cyber Security'],
-  'Engineering': ['Computer Science Engineering (CSE)', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering'],
-  'Medical': ['MBBS (Bachelor of Medicine & Bachelor of Surgery)', 'BDS (Bachelor of Dental Surgery)', 'BAMS (Ayurveda)', 'BHMS (Homeopathy)'],
-  'Business': ['Accounting', 'Marketing', 'Finance', 'Human Resources'],
-  'Arts': ['Painting', 'Music', 'Dance', 'Literature'],
-  'Science': ['Physics', 'Chemistry', 'Biology', 'Mathematics']
-};
-
 // Function to generate unicode
 function generateUnicode() {
   const courseSelect = document.getElementById('id_name');
@@ -122,7 +126,11 @@ function generateUnicode() {
   let prefix = 'GEN';
   
   if (selectedCourse) {
-    prefix = selectedCourse.substring(0, 3).toUpperCase();
+    // Get the selected option text
+    const selectedOption = courseSelect.options[courseSelect.selectedIndex];
+    if (selectedOption) {
+      prefix = selectedOption.text.substring(0, 3).toUpperCase();
+    }
   }
   
   // Generate 5 random digits
@@ -132,7 +140,7 @@ function generateUnicode() {
   unicodeField.value = unicode;
 }
 
-// Function to update sub column options
+// Function to update sub column options via AJAX
 function updateSubColumns() {
   const courseSelect = document.getElementById('id_name');
   const subColumnSelect = document.getElementById('id_sub_column');
@@ -141,22 +149,51 @@ function updateSubColumns() {
     return;
   }
   
-  const selectedCourse = courseSelect.value;
-  const options = subColumnOptions[selectedCourse] || [];
+  const selectedCourseId = courseSelect.value;
+  console.log('Selected course ID:', selectedCourseId);
   
-  // Clear existing options
-  subColumnSelect.innerHTML = '<option value="">Select Sub Column</option>';
+  if (!selectedCourseId) {
+    // Clear sub column options if no course is selected
+    subColumnSelect.innerHTML = '<option value="">Select a sub course</option>';
+    return;
+  }
   
-  // Add new options
-  options.forEach(sub => {
-    const option = document.createElement('option');
-    option.value = sub;
-    option.textContent = sub;
-    subColumnSelect.appendChild(option);
-  });
-  
-  // Generate new unicode when course changes
-  generateUnicode();
+  // Make AJAX request to get sub-courses
+  fetch(`{% url 'get_sub_courses' %}?course_category_id=${selectedCourseId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Sub courses data:', data);
+      
+      // Clear existing options
+      subColumnSelect.innerHTML = '<option value="">Select a sub course</option>';
+      
+      // Add new options
+      if (data.sub_courses && data.sub_courses.length > 0) {
+        data.sub_courses.forEach(subCourse => {
+          const option = document.createElement('option');
+          option.value = subCourse.id;
+          option.textContent = subCourse.name;
+          subColumnSelect.appendChild(option);
+        });
+      } else {
+        // Show message if no sub-courses found
+        subColumnSelect.innerHTML = '<option value="">No sub-courses available for this category</option>';
+      }
+      
+      // Generate new unicode when course changes
+      generateUnicode();
+      
+      console.log('Sub column updated');
+    })
+    .catch(error => {
+      console.error('Error fetching sub-courses:', error);
+      subColumnSelect.innerHTML = '<option value="">Error loading sub-courses</option>';
+    });
 }
 
 // Function to handle sub column change
@@ -171,12 +208,16 @@ function handleSubColumnChange() {
 document.addEventListener('DOMContentLoaded', function() {
   const courseSelect = document.getElementById('id_name');
   const subColumnSelect = document.getElementById('id_sub_column');
+  const submitBtn = document.getElementById('submitBtn');
+  const courseForm = document.getElementById('courseForm');
   
   if (courseSelect && subColumnSelect) {
     courseSelect.addEventListener('change', updateSubColumns);
     
     // Initialize sub columns based on current selection
-    updateSubColumns();
+    if (courseSelect.value) {
+      updateSubColumns();
+    }
     
     // Generate unicode if course is pre-filled
     if (courseSelect.value) {
@@ -184,6 +225,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } else {
     console.log('Required elements not found');
+  }
+  
+  // Handle form submission
+  if (courseForm) {
+    courseForm.addEventListener('submit', function(e) {
+      // Generate unicode if not already generated
+      const unicodeField = document.getElementById('id_unicode');
+      if (unicodeField && !unicodeField.value) {
+        generateUnicode();
+      }
+      
+      // Disable submit button to prevent double submission
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating...';
+      }
+    });
   }
 });
 </script>

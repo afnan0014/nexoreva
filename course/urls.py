@@ -10,4 +10,6 @@ urlpatterns = [
     path('<int:course_id>/', views.course_detail, name='course_detail'),  # /courses/1/
     path('<int:course_id>/enroll/', views.enroll_user, name='enroll_user'),  # /courses/1/enroll/
     path('<int:course_id>/edit/', views.edit_course, name='edit_course'),
+    path('<int:course_id>/delete/', views.delete_course, name='delete_course'),  # /courses/1/delete/
+    path('get-sub-courses/', views.get_sub_courses, name='get_sub_courses'),  # AJAX endpoint
 ]

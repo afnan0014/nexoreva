@@ -3,46 +3,35 @@ from django.contrib.auth.models import User
 from staff.models import Staff
 import random
 
+class CourseCategory(models.Model):
+    """Model to store course categories/names dynamically"""
+    name = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Course Categories"
+
+class SubCourse(models.Model):
+    """Model to store sub-courses for each course category"""
+    course_category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, related_name='sub_courses')
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.course_category.name} - {self.name}"
+
+    class Meta:
+        unique_together = ('course_category', 'name')
+        verbose_name_plural = "Sub Courses"
+
 class Course(models.Model):
-    COURSE_CHOICES = [
-        ('IT', 'IT'),
-        ('Engineering', 'Engineering'),
-        ('Medical', 'Medical'),
-        ('Business', 'Business'),
-        ('Arts', 'Arts'),
-        ('Science', 'Science'),
-    ]
-
-    SUB_COLUMN_CHOICES = [
-        ('', '---------'),
-        ('Web Development', 'Web Development'),
-        ('Data Science', 'Data Science'),
-        ('Networking', 'Networking'),
-        ('Cyber Security', 'Cyber Security'),
-        ('Computer Science Engineering (CSE)', 'Computer Science Engineering (CSE)'),
-        ('Mechanical Engineering', 'Mechanical Engineering'),
-        ('Civil Engineering', 'Civil Engineering'),
-        ('Electrical Engineering', 'Electrical Engineering'),
-        ('MBBS (Bachelor of Medicine & Bachelor of Surgery)', 'MBBS (Bachelor of Medicine & Bachelor of Surgery)'),
-        ('BDS (Bachelor of Dental Surgery)', 'BDS (Bachelor of Dental Surgery)'),
-        ('BAMS (Ayurveda)', 'BAMS (Ayurveda)'),
-        ('BHMS (Homeopathy)', 'BHMS (Homeopathy)'),
-        ('Accounting', 'Accounting'),
-        ('Marketing', 'Marketing'),
-        ('Finance', 'Finance'),
-        ('Human Resources', 'Human Resources'),
-        ('Painting', 'Painting'),
-        ('Music', 'Music'),
-        ('Dance', 'Dance'),
-        ('Literature', 'Literature'),
-        ('Physics', 'Physics'),
-        ('Chemistry', 'Chemistry'),
-        ('Biology', 'Biology'),
-        ('Mathematics', 'Mathematics'),
-    ]
-
-    name = models.CharField(max_length=255, choices=COURSE_CHOICES)
-    sub_column = models.CharField(max_length=255, choices=SUB_COLUMN_CHOICES, blank=True)
+    name = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, related_name='courses')
+    sub_column = models.ForeignKey(SubCourse, on_delete=models.CASCADE, related_name='courses', null=True, blank=True)
     unicode = models.CharField(max_length=10, unique=True, blank=True)
     description = models.TextField()
     start_date = models.DateField()
@@ -56,8 +45,8 @@ class Course(models.Model):
 
     def generate_unicode(self):
         # Generate prefix based on course name (first 3 letters, uppercase)
-        if self.name:
-            prefix = self.name[:3].upper()
+        if self.name and self.name.name:
+            prefix = self.name.name[:3].upper()
         else:
             prefix = 'GEN'
         
@@ -67,7 +56,9 @@ class Course(models.Model):
         return f"{prefix}{digits}"
 
     def __str__(self):
-        return self.name
+        course_name = self.name.name if self.name else 'No Course'
+        sub_course_name = self.sub_column.name if self.sub_column else 'No Sub Course'
+        return f"{course_name} - {sub_course_name}"
 
 
 class Enrollment(models.Model):

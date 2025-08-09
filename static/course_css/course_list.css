@@ -110,6 +110,26 @@ a.btn-primary:hover {
   text-decoration: none;
 }
 
+.delete-btn {
+  display: inline-block;
+  background-color: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+  color: white;
+}
+
 /* Actions column styling */
 .course-table td:last-child {
   text-align: center;
